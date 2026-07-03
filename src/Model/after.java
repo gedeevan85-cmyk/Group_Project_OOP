@@ -8,6 +8,6 @@ package Model;
  *
  * @author asus
  */
-public class NewClass {
+public class after {
     
 }
