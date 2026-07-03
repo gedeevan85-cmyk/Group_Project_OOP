@@ -6,8 +6,8 @@ package uasoop;
 
 /**
  *
- * @author asus
+ * @author gedee
  */
-public class Tesss {
+public class NewClass {
     
 }
