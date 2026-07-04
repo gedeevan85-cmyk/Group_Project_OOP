@@ -6,12 +6,13 @@ package dao;
 
 import config.DBConnection;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
-import model.MembershipPackage;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
+import model.MembershipPackage;
+
 /**
  *
  * @author gedee

@@ -5,14 +5,14 @@
 package dao;
 
 import config.DBConnection;
-import java.sql.Connection;
-import java.util.List;
-import model.Member;
+import java.sql.Connection; 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ArrayList;
 import model.MembershipPackage;
+import model.Member;
 /**
  *
  * @author gedee
