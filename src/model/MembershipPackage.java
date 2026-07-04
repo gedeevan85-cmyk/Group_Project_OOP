@@ -15,22 +15,22 @@ public class MembershipPackage {
     private int durationMonth;
     private double price;
     private String description;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public MembershipPackage() {
     }
 
     public MembershipPackage(int packageId, String packageName, int durationMonth,
-            double price, String description, Timestamp createdAt, Timestamp updatedAt) {
+            double price, String description, Timestamp created_at, Timestamp updated_at) {
 
         this.packageId = packageId;
         this.packageName = packageName;
         this.durationMonth = durationMonth;
         this.price = price;
         this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getPackageId() {
@@ -74,19 +74,19 @@ public class MembershipPackage {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 
     @Override

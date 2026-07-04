@@ -16,8 +16,8 @@ public class Member extends Person{
     private double weight;
     private double height;
     private MembershipPackage membershipPackage;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public Member() {
     }
@@ -25,7 +25,7 @@ public class Member extends Person{
     public Member(int memberId, String name, String gender, Date birthDate,
             double weight, double height, String phone, String email,
             MembershipPackage membershipPackage,
-            Timestamp createdAt, Timestamp updatedAt) {
+            Timestamp created_at, Timestamp updated_at) {
 
         super(name, gender, phone, email);
 
@@ -34,8 +34,8 @@ public class Member extends Person{
         this.weight = weight;
         this.height = height;
         this.membershipPackage = membershipPackage;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getMemberId() {
@@ -79,18 +79,18 @@ public class Member extends Person{
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 }

@@ -18,8 +18,8 @@ public class FitnessClass {
     private Time scheduleTime;
     private int durationMinute;
     private int capacity;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public FitnessClass() {
     }
@@ -27,7 +27,7 @@ public class FitnessClass {
     public FitnessClass(int classId, Trainer trainer, String className,
             String scheduleDay, Time scheduleTime,
             int durationMinute, int capacity,
-            Timestamp createdAt, Timestamp updatedAt) {
+            Timestamp created_at, Timestamp updated_at) {
 
         this.classId = classId;
         this.trainer = trainer;
@@ -36,8 +36,8 @@ public class FitnessClass {
         this.scheduleTime = scheduleTime;
         this.durationMinute = durationMinute;
         this.capacity = capacity;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getClassId() {
@@ -97,19 +97,19 @@ public class FitnessClass {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 
     @Override

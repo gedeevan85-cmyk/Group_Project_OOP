@@ -19,8 +19,8 @@ public class Enrollment {
     private double targetCalories;
     private Date enrollmentDate;
     private String status;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public Enrollment() {
     }
@@ -28,8 +28,8 @@ public class Enrollment {
     public Enrollment(int enrollmentId, Member member,
             FitnessClass fitnessClass, WorkoutProgram workoutProgram,
             double targetCalories, Date enrollmentDate,
-            String status, Timestamp createdAt,
-            Timestamp updatedAt) {
+            String status, Timestamp created_at,
+            Timestamp updated_at) {
 
         this.enrollmentId = enrollmentId;
         this.member = member;
@@ -38,8 +38,8 @@ public class Enrollment {
         this.targetCalories = targetCalories;
         this.enrollmentDate = enrollmentDate;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getEnrollmentId() {
@@ -99,18 +99,18 @@ public class Enrollment {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 }

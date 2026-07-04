@@ -13,8 +13,8 @@ public class Trainer extends Person{
      private int trainerId;
     private String specialization;
     private int experienceYear;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public Trainer() {
     }
@@ -22,15 +22,15 @@ public class Trainer extends Person{
     public Trainer(int trainerId, String name, String gender,
             String phone, String email,
             String specialization, int experienceYear,
-            Timestamp createdAt, Timestamp updatedAt) {
+            Timestamp created_at, Timestamp updated_at) {
 
         super(name, gender, phone, email);
 
         this.trainerId = trainerId;
         this.specialization = specialization;
         this.experienceYear = experienceYear;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public int getTrainerId() {
@@ -58,19 +58,19 @@ public class Trainer extends Person{
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 
     @Override
