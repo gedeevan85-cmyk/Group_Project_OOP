@@ -65,4 +65,10 @@ public class MemberController {
         }
 
     }
+    
+    public List<Member> search(String keyword) {
+
+        return memberDAO.search(keyword);
+
+    }
 }

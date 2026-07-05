@@ -19,4 +19,5 @@ public interface InterfaceDAO<T> {
     T findById(int id);
 
     List<T> findAll();
+    
 }

@@ -4,19 +4,173 @@
  */
 package view;
 
+import controller.MemberController;
+import controller.MembershipPackageController;
+import model.Member;
+import model.MembershipPackage;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author user
  */
 public class MemberForm extends javax.swing.JFrame {
-    
+    private MemberController memberController;
+    private MembershipPackageController membershipPackageController;  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MemberForm.class.getName());
+    private List<Member> memberList;
+    private Member selectedMember;
+    private int currentPage = 1;
+    private final int dataPerPage = 2;
+    private int totalPage;
 
     /**
      * Creates new form TrainerForm
      */
     public MemberForm() {
         initComponents();
+        
+        memberController = new MemberController();
+        membershipPackageController = new MembershipPackageController();
+
+        loadMembershipPackage();
+        loadTable();
+        clearForm();
+    }
+    
+    private void loadMembershipPackage() {
+
+       jComboBoxMembershipPackage.removeAllItems();
+
+        List<MembershipPackage> packages = membershipPackageController.findAll();
+
+        System.out.println("Jumlah package = " + packages.size());
+
+        for (MembershipPackage membershipPackage : packages) {
+
+            System.out.println(membershipPackage.getPackageName());
+
+            jComboBoxMembershipPackage.addItem(membershipPackage);
+
+        }
+
+    }
+    
+    private void clearForm() {
+
+        jTextFieldName.setText("");
+        jTextFieldBirthDate.setText("");
+        jTextFieldNomber.setText("");
+        jTextFieldEmail.setText("");
+        jTextFieldHeight.setText("");
+        jTextFieldWeight.setText("");
+
+        buttonGroup1.clearSelection();
+
+        if (jComboBoxMembershipPackage.getItemCount() > 0) {
+            jComboBoxMembershipPackage.setSelectedIndex(0);
+        }
+
+    }
+    
+    private void loadTable() {
+
+         loadTable(memberController.findAll());
+
+    }
+    
+    private void loadTable(List<Member> members) {
+
+        DefaultTableModel model = (DefaultTableModel) jTableMember.getModel();
+
+        model.setRowCount(0);
+
+        memberList = members;
+        
+        totalPage = (int) Math.ceil((double) memberList.size() / dataPerPage);
+
+        if (totalPage == 0) {
+            totalPage = 1;
+        }
+
+        if (currentPage > totalPage) {
+            currentPage = totalPage;
+        }
+
+        int start = (currentPage - 1) * dataPerPage;
+        int end = Math.min(start + dataPerPage, memberList.size());
+
+        int no = start + 1;
+
+        for (int i = start; i < end; i++) {
+
+            Member member = memberList.get(i);
+
+            model.addRow(new Object[]{
+                no++,
+                member.getName(),
+                member.getGender(),
+                member.getBirthDate(),
+                member.getPhone(),
+                member.getEmail(),
+                member.getHeight(),
+                member.getWeight(),
+                member.getMembershipPackage().getPackageName()
+            });
+
+        }
+        
+        jLabelNoPage.setText(" Halaman " + currentPage + " / " + totalPage);
+
+    }
+    
+    private Member getMemberFromForm() {
+
+        Member member = new Member();
+        
+        member.setName(jTextFieldName.getText());
+        if (jRadioButtonMale.isSelected()) {
+
+            member.setGender("Male");
+
+        } else {
+
+            member.setGender("Female");
+
+        }
+        member.setBirthDate(java.sql.Date.valueOf(jTextFieldBirthDate.getText()));
+        member.setWeight(Double.parseDouble(jTextFieldWeight.getText()));
+        member.setHeight(
+        Double.parseDouble(jTextFieldHeight.getText()));
+        member.setPhone(jTextFieldNomber.getText());
+        member.setEmail(jTextFieldEmail.getText());
+        MembershipPackage membershipPackage =(MembershipPackage)jComboBoxMembershipPackage.getSelectedItem();
+        member.setMembershipPackage(membershipPackage);
+
+        return member;
+
+    }
+    
+    
+    
+    private void setMemberToForm(Member member) {
+        jTextFieldName.setText(member.getName());
+        jTextFieldBirthDate.setText(member.getBirthDate().toString());
+        jTextFieldWeight.setText(String.valueOf(member.getWeight()));
+        jTextFieldHeight.setText(String.valueOf(member.getHeight()));
+        jTextFieldNomber.setText(member.getPhone());
+        jTextFieldEmail.setText(member.getEmail());
+        if (member.getGender().equals("Male")) {
+
+            jRadioButtonMale.setSelected(true);
+
+        } else {
+
+            jRadioButtonFemale.setSelected(true);
+
+        }
+        jComboBoxMembershipPackage.setSelectedItem(member.getMembershipPackage());
     }
 
     /**
@@ -28,6 +182,7 @@ public class MemberForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -40,7 +195,7 @@ public class MemberForm extends javax.swing.JFrame {
         jTextFieldName = new javax.swing.JTextField();
         jRadioButtonMale = new javax.swing.JRadioButton();
         jRadioButtonFemale = new javax.swing.JRadioButton();
-        jTextFieldBirtDate = new javax.swing.JTextField();
+        jTextFieldBirthDate = new javax.swing.JTextField();
         jTextFieldEmail = new javax.swing.JTextField();
         jTextFieldHeight = new javax.swing.JTextField();
         jTextFieldWeight = new javax.swing.JTextField();
@@ -48,7 +203,7 @@ public class MemberForm extends javax.swing.JFrame {
         jTextFieldNomber = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextFieldMembershipPackage = new javax.swing.JTextField();
+        jComboBoxMembershipPackage = new javax.swing.JComboBox<>();
         jButtonCancel = new javax.swing.JButton();
         jButtonDelete = new javax.swing.JButton();
         jButtonSave = new javax.swing.JButton();
@@ -100,17 +255,19 @@ public class MemberForm extends javax.swing.JFrame {
         jTextFieldName.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldName.setForeground(new java.awt.Color(255, 255, 255));
 
+        buttonGroup1.add(jRadioButtonMale);
         jRadioButtonMale.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButtonMale.setText("Male");
         jRadioButtonMale.addActionListener(this::jRadioButtonMaleActionPerformed);
 
+        buttonGroup1.add(jRadioButtonFemale);
         jRadioButtonFemale.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButtonFemale.setText("Female");
         jRadioButtonFemale.addActionListener(this::jRadioButtonFemaleActionPerformed);
 
-        jTextFieldBirtDate.setBackground(new java.awt.Color(0, 0, 0));
-        jTextFieldBirtDate.setForeground(new java.awt.Color(255, 255, 255));
-        jTextFieldBirtDate.setText("dd/mm/yyyy");
+        jTextFieldBirthDate.setBackground(new java.awt.Color(0, 0, 0));
+        jTextFieldBirthDate.setForeground(new java.awt.Color(255, 255, 255));
+        jTextFieldBirthDate.setText("yyyy-MM-dd");
 
         jTextFieldEmail.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldEmail.setForeground(new java.awt.Color(255, 255, 255));
@@ -124,7 +281,7 @@ public class MemberForm extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Nomber");
+        jLabel1.setText("Phone");
 
         jTextFieldNomber.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldNomber.setForeground(new java.awt.Color(255, 255, 255));
@@ -136,8 +293,7 @@ public class MemberForm extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Membership package");
 
-        jTextFieldMembershipPackage.setBackground(new java.awt.Color(0, 0, 0));
-        jTextFieldMembershipPackage.setForeground(new java.awt.Color(255, 255, 255));
+        jComboBoxMembershipPackage.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -153,7 +309,7 @@ public class MemberForm extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldBirtDate, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                    .addComponent(jTextFieldBirthDate, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jRadioButtonMale)
                         .addGap(18, 18, 18)
@@ -175,7 +331,7 @@ public class MemberForm extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldWeight, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
                             .addComponent(jTextFieldHeight, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                            .addComponent(jTextFieldMembershipPackage))))
+                            .addComponent(jComboBoxMembershipPackage, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(68, 68, 68))
         );
         jPanel2Layout.setVerticalGroup(
@@ -216,7 +372,7 @@ public class MemberForm extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
                             .addComponent(jLabel6)
-                            .addComponent(jTextFieldBirtDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTextFieldBirthDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -227,7 +383,7 @@ public class MemberForm extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldNomber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextFieldMembershipPackage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxMembershipPackage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -255,37 +411,45 @@ public class MemberForm extends javax.swing.JFrame {
         jButtonUpdate.setBackground(new java.awt.Color(255, 0, 0));
         jButtonUpdate.setText("UPDATE");
         jButtonUpdate.setBorder(null);
+        jButtonUpdate.addActionListener(this::jButtonUpdateActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
         jTableMember.setBackground(new java.awt.Color(0, 0, 0));
+        jTableMember.setForeground(new java.awt.Color(255, 255, 255));
         jTableMember.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Name", "Gender", "Birth Date", "Nomber", "Email", "Height", "Weight"
+                "No", "Name", "Gender", "Birth Date", "Nomber", "Email", "Height", "Weight", "Membership"
             }
         ));
+        jTableMember.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMemberMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableMember);
         if (jTableMember.getColumnModel().getColumnCount() > 0) {
             jTableMember.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jTextFieldSearch.setBackground(new java.awt.Color(255, 0, 0));
-        jTextFieldSearch.setText("Search");
         jTextFieldSearch.setBorder(null);
 
         jButtonSearch.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSearch.setText("SEARCH");
         jButtonSearch.setBorder(null);
+        jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
         jButtonPrevv.setText("<<Prevv");
         jButtonPrevv.setBorder(null);
+        jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 
         jButtonNext.setBackground(new java.awt.Color(255, 0, 0));
         jButtonNext.setText("Next>>");
@@ -293,7 +457,7 @@ public class MemberForm extends javax.swing.JFrame {
         jButtonNext.addActionListener(this::jButtonNextActionPerformed);
 
         jLabelNoPage.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelNoPage.setText("jLabel1");
+        jLabelNoPage.setText("-");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -398,15 +562,59 @@ public class MemberForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // TODO add your handling code here:
+        if (selectedMember == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data terlebih dahulu.");
+
+            return;
+
+        }
+
+        int pilihan = JOptionPane.showConfirmDialog(this,"Yakin ingin menghapus data ini?","Konfirmasi",JOptionPane.YES_NO_OPTION);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            memberController.delete(selectedMember.getMemberId());
+
+            loadTable();
+
+            clearForm();
+
+            selectedMember = null;
+
+            JOptionPane.showMessageDialog(this,"Data berhasil dihapus.");
+
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+            try {
+
+            Member member = getMemberFromForm();
+
+            memberController.save(member);
+            
+            currentPage = 1;
+
+            loadTable();
+
+            clearForm();
+
+            JOptionPane.showMessageDialog(this,"Data member berhasil disimpan.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        // TODO add your handling code here:
+        clearForm();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jTextFieldWeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldWeightActionPerformed
@@ -422,8 +630,84 @@ public class MemberForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButtonMaleActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        // TODO add your handling code here:
+        if (currentPage < totalPage) {
+
+            currentPage++;
+
+            loadTable(memberList);
+
+        }
     }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        if (selectedMember == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data yang akan diperbarui.");
+
+            return;
+
+        }
+
+        try {
+
+            Member member = getMemberFromForm();
+
+            member.setMemberId(selectedMember.getMemberId());
+
+            memberController.update(member);
+
+            loadTable();
+
+            clearForm();
+
+            selectedMember = null;
+
+            JOptionPane.showMessageDialog(this,"Data berhasil diperbarui.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+
+         }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jTableMemberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMemberMouseClicked
+        int row = jTableMember.getSelectedRow();
+
+        if (row >= 0) {
+
+            int index = (currentPage - 1) * dataPerPage + row;
+
+            selectedMember = memberList.get(index);
+
+            setMemberToForm(selectedMember);
+
+        }
+    }//GEN-LAST:event_jTableMemberMouseClicked
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+        String keyword = jTextFieldSearch.getText().trim();
+
+        List<Member> members = memberController.search(keyword);
+        
+        currentPage = 1;
+
+        loadTable(members);
+    }//GEN-LAST:event_jButtonSearchActionPerformed
+
+    private void jButtonPrevvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevvActionPerformed
+         if (currentPage > 1) {
+
+            currentPage--;
+
+            loadTable(memberList);
+
+        }
+    }//GEN-LAST:event_jButtonPrevvActionPerformed
 
     /**
      * @param args the command line arguments
@@ -451,6 +735,7 @@ public class MemberForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonDelete;
@@ -459,6 +744,7 @@ public class MemberForm extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSave;
     private javax.swing.JButton jButtonSearch;
     private javax.swing.JButton jButtonUpdate;
+    private javax.swing.JComboBox<MembershipPackage> jComboBoxMembershipPackage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
@@ -479,10 +765,9 @@ public class MemberForm extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButtonMale;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableMember;
-    private javax.swing.JTextField jTextFieldBirtDate;
+    private javax.swing.JTextField jTextFieldBirthDate;
     private javax.swing.JTextField jTextFieldEmail;
     private javax.swing.JTextField jTextFieldHeight;
-    private javax.swing.JTextField jTextFieldMembershipPackage;
     private javax.swing.JTextField jTextFieldName;
     private javax.swing.JTextField jTextFieldNomber;
     private javax.swing.JTextField jTextFieldSearch;

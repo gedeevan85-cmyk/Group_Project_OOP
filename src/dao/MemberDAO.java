@@ -204,4 +204,62 @@ public class MemberDAO implements InterfaceDAO<Member>{
 
         return members;
     }
+    
+    public List<Member> search(String keyword) {
+
+        List<Member> members = new ArrayList<>();
+
+        String sql = "SELECT * FROM member "
+                + "WHERE name LIKE ? "
+                + "OR phone LIKE ? "
+                + "OR email LIKE ?";
+
+        try {
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+            statement.setString(3, "%" + keyword + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                Member member = new Member();
+
+                member.setMemberId(resultSet.getInt("member_id"));
+                member.setName(resultSet.getString("name"));
+                member.setGender(resultSet.getString("gender"));
+                member.setBirthDate(resultSet.getDate("birth_date"));
+                member.setWeight(resultSet.getDouble("weight"));
+                member.setHeight(resultSet.getDouble("height"));
+                member.setPhone(resultSet.getString("phone"));
+                member.setEmail(resultSet.getString("email"));
+
+                int packageId = resultSet.getInt("package_id");
+
+                MembershipPackage membershipPackage =
+                        membershipPackageDAO.findById(packageId);
+
+                member.setMembershipPackage(membershipPackage);
+
+                member.setCreatedAt(
+                        resultSet.getTimestamp("created_at"));
+                member.setUpdatedAt(
+                        resultSet.getTimestamp("updated_at"));
+
+                members.add(member);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return members;
+
+    }
 }

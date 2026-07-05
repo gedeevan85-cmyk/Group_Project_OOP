@@ -137,36 +137,41 @@ public class MembershipPackageDAO implements InterfaceDAO<MembershipPackage> {
     public List<MembershipPackage> findAll() {
         List<MembershipPackage> membershipPackages = new ArrayList<>();
 
-        String sql = "SELECT * FROM membership_package";
+    String sql = "SELECT * FROM membership_package";
 
-        try {
+    try {
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = connection.prepareStatement(sql);
 
-            ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
+        System.out.println("Query membership_package dijalankan");
 
-                MembershipPackage membershipPackage = new MembershipPackage();
+        while (resultSet.next()) {
 
-                membershipPackage.setPackageId(resultSet.getInt("package_id"));
-                membershipPackage.setPackageName(resultSet.getString("package_name"));
-                membershipPackage.setDurationMonth(resultSet.getInt("duration_month"));
-                membershipPackage.setPrice(resultSet.getDouble("price"));
-                membershipPackage.setDescription(resultSet.getString("description"));
-                membershipPackage.setCreatedAt(resultSet.getTimestamp("createdAt"));
-                membershipPackage.setUpdatedAt(resultSet.getTimestamp("updatedAt"));
+            System.out.println("Data ditemukan : "
+                    + resultSet.getString("package_name"));
 
-                membershipPackages.add(membershipPackage);
+            MembershipPackage membershipPackage = new MembershipPackage();
 
-            }
+            membershipPackage.setPackageId(resultSet.getInt("package_id"));
+            membershipPackage.setPackageName(resultSet.getString("package_name"));
+            membershipPackage.setDurationMonth(resultSet.getInt("duration_month"));
+            membershipPackage.setPrice(resultSet.getDouble("price"));
+            membershipPackage.setDescription(resultSet.getString("description"));
 
-        } catch (SQLException e) {
-
-            e.printStackTrace();
+            membershipPackages.add(membershipPackage);
 
         }
 
-        return membershipPackages;
+        System.out.println("Total List = " + membershipPackages.size());
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+
+    }
+
+    return membershipPackages;
     }
 }
