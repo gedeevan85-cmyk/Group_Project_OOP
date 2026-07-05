@@ -178,4 +178,51 @@ public class TrainerDAO implements InterfaceDAO<Trainer>{
 
         return trainers;
     }
+    
+    public List<Trainer> search(String keyword){
+        List<Trainer> trainers = new ArrayList<>();
+
+        String sql = "SELECT * FROM trainer "
+                + "WHERE name LIKE ? "
+                + "OR phone LIKE ? "
+                + "OR email LIKE ? "
+                + "OR specialization LIKE ?";
+
+        try {
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+            statement.setString(3, "%" + keyword + "%");
+            statement.setString(4, "%" + keyword + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                Trainer trainer = new Trainer();
+
+                trainer.setTrainerId(resultSet.getInt("trainer_id"));
+                trainer.setName(resultSet.getString("name"));
+                trainer.setGender(resultSet.getString("gender"));
+                trainer.setPhone(resultSet.getString("phone"));
+                trainer.setEmail(resultSet.getString("email"));
+                trainer.setSpecialization(resultSet.getString("specialization"));
+                trainer.setExperienceYear(resultSet.getInt("experience_year"));
+                trainer.setCreatedAt(resultSet.getTimestamp("created_at"));
+                trainer.setUpdatedAt(resultSet.getTimestamp("updated_at"));
+
+                trainers.add(trainer);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return trainers;
+    }
 }

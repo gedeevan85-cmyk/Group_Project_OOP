@@ -602,7 +602,7 @@
                         <Column editable="true" title="Name" type="java.lang.Object"/>
                         <Column editable="true" title="Gender" type="java.lang.Object"/>
                         <Column editable="true" title="Birth Date" type="java.lang.Object"/>
-                        <Column editable="true" title="Nomber" type="java.lang.Object"/>
+                        <Column editable="true" title="Phone" type="java.lang.Object"/>
                         <Column editable="true" title="Email" type="java.lang.Object"/>
                         <Column editable="true" title="Height" type="java.lang.Object"/>
                         <Column editable="true" title="Weight" type="java.lang.Object"/>

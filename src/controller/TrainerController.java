@@ -61,4 +61,9 @@ public class TrainerController {
         }
 
     }
+    
+    public List<Trainer> search(String keyword) {
+
+        return trainerDAO.search(keyword);
+    }
 }

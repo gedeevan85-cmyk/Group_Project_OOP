@@ -425,7 +425,7 @@ public class MemberForm extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Name", "Gender", "Birth Date", "Nomber", "Email", "Height", "Weight", "Membership"
+                "No", "Name", "Gender", "Birth Date", "Phone", "Email", "Height", "Weight", "Membership"
             }
         ));
         jTableMember.addMouseListener(new java.awt.event.MouseAdapter() {

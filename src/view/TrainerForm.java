@@ -4,19 +4,157 @@
  */
 package view;
 
+import controller.TrainerController;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Trainer;
 /**
  *
  * @author user
  */
-public class TrainingForm extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TrainingForm.class.getName());
+public class TrainerForm extends javax.swing.JFrame {
+    private TrainerController trainerController;
+    private List<Trainer> trainerList;
+    private Trainer selectedTrainer;
+    private int currentPage = 1;
+    private final int dataPerPage = 5;
+    private int totalPage;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TrainerForm.class.getName());
 
     /**
      * Creates new form TrainerForm
      */
-    public TrainingForm() {
+    public TrainerForm() {
         initComponents();
+        
+        trainerController = new TrainerController();
+
+        loadTable();
+
+        clearForm();
+    }
+    
+    private void clearForm() {
+
+        jTextFieldName.setText("");
+
+        buttonGroup1.clearSelection();
+
+        jTextFieldNumber.setText("");
+
+        jTextFieldEmail.setText("");
+
+        jTextFieldSpecialization.setText("");
+
+        jTextFieldExperienceYear.setText("");
+
+        jTextFieldSearch.setText("");
+
+        jTableTrainer.clearSelection();
+
+        selectedTrainer = null;
+
+    }
+    
+    private Trainer getTrainerFromForm() {
+
+        Trainer trainer = new Trainer();
+
+        trainer.setName(jTextFieldName.getText().trim());
+
+        trainer.setGender(jRadioButtonMale.isSelected()? "Male" : "Female");
+
+        trainer.setPhone(jTextFieldNumber.getText().trim());
+
+        trainer.setEmail(jTextFieldEmail.getText().trim());
+
+        trainer.setSpecialization(jTextFieldSpecialization.getText().trim());
+
+        trainer.setExperienceYear(Integer.parseInt(jTextFieldExperienceYear.getText()));
+
+        return trainer;
+
+    }
+    
+    private void setTrainerToForm(
+        Trainer trainer) {
+
+        jTextFieldName.setText(trainer.getName());
+
+        if (trainer.getGender().equalsIgnoreCase("Male")) {
+
+            jRadioButtonMale.setSelected(true);
+
+        } else {
+
+            jRadioButtonFemale.setSelected(true);
+
+        }
+
+        jTextFieldNumber.setText(trainer.getPhone());
+
+        jTextFieldEmail.setText(trainer.getEmail());
+
+        jTextFieldSpecialization.setText(trainer.getSpecialization());
+
+        jTextFieldExperienceYear.setText(String.valueOf(trainer.getExperienceYear()));
+
+    }
+    
+    private void loadTable() {
+
+        loadTable(trainerController.findAll());
+
+    }
+    
+    private void loadTable(List<Trainer> trainers) {
+
+        DefaultTableModel model = (DefaultTableModel) jTableTrainer.getModel();
+
+        model.setRowCount(0);
+
+        trainerList = trainers;
+
+        totalPage = (int) Math.ceil(
+                (double) trainerList.size() / dataPerPage);
+
+        if (totalPage == 0) {
+
+            totalPage = 1;
+
+        }
+
+        if (currentPage > totalPage) {
+
+            currentPage = totalPage;
+
+        }
+
+        int start = (currentPage - 1) * dataPerPage;
+
+        int end = Math.min(start + dataPerPage,trainerList.size());
+
+        int no = start + 1;
+
+        for (int i = start; i < end; i++) {
+
+            Trainer trainer = trainerList.get(i);
+
+            model.addRow(new Object[]{
+                no++,
+                trainer.getName(),
+                trainer.getGender(),
+                trainer.getPhone(),
+                trainer.getEmail(),
+                trainer.getSpecialization(),
+                trainer.getExperienceYear()
+            });
+
+        }
+
+        jLabelNoPage.setText( "Halaman " + currentPage + " / " + totalPage);
+
     }
 
     /**
@@ -28,6 +166,7 @@ public class TrainingForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -40,9 +179,9 @@ public class TrainingForm extends javax.swing.JFrame {
         jTextFieldName = new javax.swing.JTextField();
         jRadioButtonMale = new javax.swing.JRadioButton();
         jRadioButtonFemale = new javax.swing.JRadioButton();
-        jTextFieldNomber = new javax.swing.JTextField();
+        jTextFieldNumber = new javax.swing.JTextField();
         jTextFieldEmail = new javax.swing.JTextField();
-        jTextFieldExpertize = new javax.swing.JTextField();
+        jTextFieldSpecialization = new javax.swing.JTextField();
         jTextFieldExperienceYear = new javax.swing.JTextField();
         jButtonCancel = new javax.swing.JButton();
         jButtonDelete = new javax.swing.JButton();
@@ -82,13 +221,13 @@ public class TrainingForm extends javax.swing.JFrame {
         jLabel3.setText("Gender");
 
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Nomber");
+        jLabel6.setText("Phone");
 
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Email");
 
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("Expertize");
+        jLabel8.setText("Specialization");
 
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Experience Year");
@@ -96,22 +235,24 @@ public class TrainingForm extends javax.swing.JFrame {
         jTextFieldName.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldName.setForeground(new java.awt.Color(255, 255, 255));
 
+        buttonGroup1.add(jRadioButtonMale);
         jRadioButtonMale.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButtonMale.setText("Male");
         jRadioButtonMale.addActionListener(this::jRadioButtonMaleActionPerformed);
 
+        buttonGroup1.add(jRadioButtonFemale);
         jRadioButtonFemale.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButtonFemale.setText("Female");
         jRadioButtonFemale.addActionListener(this::jRadioButtonFemaleActionPerformed);
 
-        jTextFieldNomber.setBackground(new java.awt.Color(0, 0, 0));
-        jTextFieldNomber.setForeground(new java.awt.Color(255, 255, 255));
+        jTextFieldNumber.setBackground(new java.awt.Color(0, 0, 0));
+        jTextFieldNumber.setForeground(new java.awt.Color(255, 255, 255));
 
         jTextFieldEmail.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldEmail.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTextFieldExpertize.setBackground(new java.awt.Color(0, 0, 0));
-        jTextFieldExpertize.setForeground(new java.awt.Color(255, 255, 255));
+        jTextFieldSpecialization.setBackground(new java.awt.Color(0, 0, 0));
+        jTextFieldSpecialization.setForeground(new java.awt.Color(255, 255, 255));
 
         jTextFieldExperienceYear.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldExperienceYear.setForeground(new java.awt.Color(255, 255, 255));
@@ -130,7 +271,7 @@ public class TrainingForm extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldNomber, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jRadioButtonMale)
                         .addGap(18, 18, 18)
@@ -148,7 +289,7 @@ public class TrainingForm extends javax.swing.JFrame {
                         .addGap(55, 55, 55)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldExperienceYear, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldExpertize, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTextFieldSpecialization, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -176,7 +317,7 @@ public class TrainingForm extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRadioButtonFemale)
-                            .addComponent(jTextFieldExpertize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldSpecialization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8))))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -184,7 +325,7 @@ public class TrainingForm extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
                             .addComponent(jLabel6)
-                            .addComponent(jTextFieldNomber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTextFieldNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jTextFieldExperienceYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -215,10 +356,12 @@ public class TrainingForm extends javax.swing.JFrame {
         jButtonUpdate.setBackground(new java.awt.Color(255, 0, 0));
         jButtonUpdate.setText("UPDATE");
         jButtonUpdate.setBorder(null);
+        jButtonUpdate.addActionListener(this::jButtonUpdateActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
         jTableTrainer.setBackground(new java.awt.Color(0, 0, 0));
+        jTableTrainer.setForeground(new java.awt.Color(255, 255, 255));
         jTableTrainer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
@@ -227,9 +370,14 @@ public class TrainingForm extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Name", "Gender", "Nomber", "Email", "Expertize", "Experience Year"
+                "No", "Name", "Gender", "Phone", "Email", "Expertize", "Experience Year"
             }
         ));
+        jTableTrainer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableTrainerMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableTrainer);
 
         jTextFieldSearch.setBackground(new java.awt.Color(255, 0, 0));
@@ -239,10 +387,12 @@ public class TrainingForm extends javax.swing.JFrame {
         jButtonSearch.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSearch.setText("SEARCH");
         jButtonSearch.setBorder(null);
+        jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
-        jButtonPrevv.setText("<<Prevv");
+        jButtonPrevv.setText("<<Prev");
         jButtonPrevv.setBorder(null);
+        jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 
         jButtonNext.setBackground(new java.awt.Color(255, 0, 0));
         jButtonNext.setText("Next>>");
@@ -316,7 +466,7 @@ public class TrainingForm extends javax.swing.JFrame {
                                 .addComponent(jButtonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(39, Short.MAX_VALUE))
+                        .addContainerGap(43, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonBack, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -353,15 +503,59 @@ public class TrainingForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // TODO add your handling code here:
+        if (selectedTrainer == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data terlebih dahulu.");
+
+            return;
+
+        }
+
+        int pilihan = JOptionPane.showConfirmDialog(this,"Yakin ingin menghapus data ini?","Konfirmasi",JOptionPane.YES_NO_OPTION);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            trainerController.delete(selectedTrainer.getTrainerId());
+
+            loadTable();
+
+            clearForm();
+
+            selectedTrainer = null;
+
+            JOptionPane.showMessageDialog(this,"Data trainer berhasil dihapus.");
+
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+       try {
+
+            Trainer trainer = getTrainerFromForm();
+
+            trainerController.save(trainer);
+
+            currentPage = 1;
+
+            loadTable();
+
+            clearForm();
+
+            JOptionPane.showMessageDialog(this,"Data trainer berhasil disimpan.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        // TODO add your handling code here:
+        clearForm();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jTextFieldExperienceYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldExperienceYearActionPerformed
@@ -377,8 +571,82 @@ public class TrainingForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButtonMaleActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        // TODO add your handling code here:
+       if (currentPage < totalPage) {
+
+            currentPage++;
+
+            loadTable(trainerList);
+
+        }
     }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jTableTrainerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableTrainerMouseClicked
+        int row = jTableTrainer.getSelectedRow();
+
+        if (row >= 0) {
+
+            int index = (currentPage - 1) * dataPerPage + row;
+
+            selectedTrainer = trainerList.get(index);
+
+            setTrainerToForm(selectedTrainer);
+
+        }
+    }//GEN-LAST:event_jTableTrainerMouseClicked
+
+    private void jButtonPrevvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevvActionPerformed
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            loadTable(trainerList);
+
+        }
+    }//GEN-LAST:event_jButtonPrevvActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+       if (selectedTrainer == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data yang akan diperbarui.");
+
+            return;
+
+        }
+
+        try {
+
+            Trainer trainer = getTrainerFromForm();
+
+            trainer.setTrainerId(selectedTrainer.getTrainerId());
+
+            trainerController.update(trainer);
+
+            loadTable();
+
+            clearForm();
+
+            selectedTrainer = null;
+
+            JOptionPane.showMessageDialog(this,"Data trainer berhasil diperbarui.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+        String keyword = jTextFieldSearch.getText().trim();
+
+        currentPage = 1;
+
+        loadTable(trainerController.search(keyword));
+    }//GEN-LAST:event_jButtonSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -402,10 +670,11 @@ public class TrainingForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TrainingForm().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new TrainerForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonDelete;
@@ -433,9 +702,9 @@ public class TrainingForm extends javax.swing.JFrame {
     private javax.swing.JTable jTableTrainer;
     private javax.swing.JTextField jTextFieldEmail;
     private javax.swing.JTextField jTextFieldExperienceYear;
-    private javax.swing.JTextField jTextFieldExpertize;
     private javax.swing.JTextField jTextFieldName;
-    private javax.swing.JTextField jTextFieldNomber;
+    private javax.swing.JTextField jTextFieldNumber;
     private javax.swing.JTextField jTextFieldSearch;
+    private javax.swing.JTextField jTextFieldSpecialization;
     // End of variables declaration//GEN-END:variables
 }
