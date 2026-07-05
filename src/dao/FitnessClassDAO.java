@@ -197,4 +197,68 @@ public List<FitnessClass> findAll() {
 
     return fitnessClasses;
 }
+
+public List<FitnessClass> search(String keyword) {
+
+    List<FitnessClass> fitnessClasses = new ArrayList<>();
+
+    String sql = "SELECT * FROM fitness_class "
+            + "WHERE class_name LIKE ? "
+            + "OR schedule_day LIKE ?";
+
+    try {
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, "%" + keyword + "%");
+        statement.setString(2, "%" + keyword + "%");
+
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+
+            FitnessClass fitnessClass = new FitnessClass();
+
+            fitnessClass.setClassId(resultSet.getInt("class_id"));
+
+            Trainer trainer =
+                    trainerDAO.findById(
+                            resultSet.getInt("trainer_id"));
+
+            fitnessClass.setTrainer(trainer);
+
+            fitnessClass.setClassName(
+                    resultSet.getString("class_name"));
+
+            fitnessClass.setScheduleDay(
+                    resultSet.getString("schedule_day"));
+
+            fitnessClass.setScheduleTime(
+                    resultSet.getTime("schedule_time"));
+
+            fitnessClass.setDurationMinute(
+                    resultSet.getInt("duration_minute"));
+
+            fitnessClass.setCapacity(
+                    resultSet.getInt("capacity"));
+
+            fitnessClass.setCreatedAt(
+                    resultSet.getTimestamp("created_at"));
+
+            fitnessClass.setUpdatedAt(
+                    resultSet.getTimestamp("updated_at"));
+
+            fitnessClasses.add(fitnessClass);
+
+        }
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+
+    }
+
+    return fitnessClasses;
+
+}
 }

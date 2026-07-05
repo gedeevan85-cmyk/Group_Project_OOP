@@ -4,12 +4,26 @@
  */
 package view;
 
+import controller.FitnessClassController;
+import controller.TrainerController;
+import java.sql.Time;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.FitnessClass;
+import model.Trainer;
 /**
  *
  * @author user
  */
 public class FitnessClassForm extends javax.swing.JFrame {
-    
+    private FitnessClassController fitnessClassController;
+    private TrainerController trainerController;
+    private List<FitnessClass> fitnessClassList;
+    private FitnessClass selectedFitnessClass;
+    private int currentPage = 1;
+    private final int dataPerPage = 5;
+    private int totalPage;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FitnessClassForm.class.getName());
 
     /**
@@ -17,7 +31,166 @@ public class FitnessClassForm extends javax.swing.JFrame {
      */
     public FitnessClassForm() {
         initComponents();
+        
+        fitnessClassController = new FitnessClassController();
+        trainerController = new TrainerController();
+        loadTrainer();
+        loadTable();
+        clearForm();
     }
+    
+    private void loadTrainer() {
+
+        jComboBoxTrainer.removeAllItems();
+
+        List<Trainer> trainers = trainerController.findAll();
+
+        for (Trainer trainer : trainers) {
+
+            jComboBoxTrainer.addItem(trainer);
+
+        }
+
+    }
+    
+    private void clearForm() {
+
+        jComboBoxTrainer.setSelectedIndex(-1);
+
+        jTextFieldClass.setText("");
+
+        jComboBoxDay.setSelectedIndex(0);
+
+        jTextFieldTime.setText("00:00:00");
+
+        jTextFielDuration.setText("");
+
+        jTextFieldCapasity.setText("");
+
+        jTextFieldSearch.setText("");
+
+        jTableFitnessClass.clearSelection();
+
+        selectedFitnessClass = null;
+
+    }
+    
+    private FitnessClass getFitnessClassFromForm() {
+
+        FitnessClass fitnessClass = new FitnessClass();
+
+        fitnessClass.setTrainer(
+                (Trainer) jComboBoxTrainer.getSelectedItem());
+
+        fitnessClass.setClassName(
+                jTextFieldClass.getText().trim());
+
+        fitnessClass.setScheduleDay(
+                jComboBoxDay.getSelectedItem().toString());
+
+        fitnessClass.setScheduleTime(
+                Time.valueOf(jTextFieldTime.getText().trim()));
+
+        fitnessClass.setDurationMinute(
+                Integer.parseInt(jTextFielDuration.getText()));
+
+        fitnessClass.setCapacity(
+                Integer.parseInt(jTextFieldCapasity.getText()));
+
+        return fitnessClass;
+
+    }
+    
+    private void setFitnessClassToForm(FitnessClass fitnessClass) {
+
+        jComboBoxTrainer.setSelectedItem(
+                fitnessClass.getTrainer());
+
+        jTextFieldClass.setText(
+                fitnessClass.getClassName());
+
+        jComboBoxDay.setSelectedItem(
+                fitnessClass.getScheduleDay());
+
+        jTextFieldTime.setText(
+                fitnessClass.getScheduleTime().toString());
+
+        jTextFielDuration.setText(
+                String.valueOf(
+                        fitnessClass.getDurationMinute()));
+
+        jTextFieldCapasity.setText(
+                String.valueOf(
+                        fitnessClass.getCapacity()));
+
+    }
+    
+    private void loadTable() {
+
+        loadTable(fitnessClassController.findAll());
+
+    }
+    
+    private void loadTable(List<FitnessClass> fitnessClasses) {
+
+        DefaultTableModel model =
+                (DefaultTableModel) jTableFitnessClass.getModel();
+
+        model.setRowCount(0);
+
+        fitnessClassList = fitnessClasses;
+
+        totalPage = (int) Math.ceil(
+                (double) fitnessClassList.size() / dataPerPage);
+
+        if (totalPage == 0) {
+
+            totalPage = 1;
+
+        }
+
+        if (currentPage > totalPage) {
+
+            currentPage = totalPage;
+
+        }
+
+        int start = (currentPage - 1) * dataPerPage;
+
+        int end = Math.min(
+                start + dataPerPage,
+                fitnessClassList.size());
+
+        int no = start + 1;
+
+        for (int i = start; i < end; i++) {
+
+            FitnessClass fitnessClass =
+                    fitnessClassList.get(i);
+
+            model.addRow(new Object[]{
+
+                no++,
+                fitnessClass.getTrainer().getName(),
+                fitnessClass.getClassName(),
+                fitnessClass.getScheduleDay(),
+                fitnessClass.getScheduleTime(),
+                fitnessClass.getDurationMinute(),
+                fitnessClass.getCapacity()
+
+            });
+
+        }
+
+        jLabelNoPage.setText(
+                "Halaman "
+                + currentPage
+                + " / "
+                + totalPage);
+
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,14 +281,13 @@ public class FitnessClassForm extends javax.swing.JFrame {
 
         jComboBoxTrainer.setBackground(new java.awt.Color(0, 0, 0));
         jComboBoxTrainer.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxTrainer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jTextFieldClass.setBackground(new java.awt.Color(0, 0, 0));
         jTextFieldClass.setForeground(new java.awt.Color(255, 255, 255));
 
         jComboBoxDay.setBackground(new java.awt.Color(0, 0, 0));
         jComboBoxDay.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -208,21 +380,28 @@ public class FitnessClassForm extends javax.swing.JFrame {
         jButtonUpdate.setBackground(new java.awt.Color(255, 0, 0));
         jButtonUpdate.setText("UPDATE");
         jButtonUpdate.setBorder(null);
+        jButtonUpdate.addActionListener(this::jButtonUpdateActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
         jTableFitnessClass.setBackground(new java.awt.Color(0, 0, 0));
+        jTableFitnessClass.setForeground(new java.awt.Color(255, 255, 255));
         jTableFitnessClass.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Name", "Gender", "Birth Date", "Nomber", "Email", "Height", "Weight"
+                "No", "Trainer", "Class", "Day", "Time", "Duration", "Capasity"
             }
         ));
+        jTableFitnessClass.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFitnessClassMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableFitnessClass);
         if (jTableFitnessClass.getColumnModel().getColumnCount() > 0) {
             jTableFitnessClass.getColumnModel().getColumn(4).setResizable(false);
@@ -235,10 +414,12 @@ public class FitnessClassForm extends javax.swing.JFrame {
         jButtonSearch.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSearch.setText("SEARCH");
         jButtonSearch.setBorder(null);
+        jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
-        jButtonPrevv.setText("<<Prevv");
+        jButtonPrevv.setText("<<Prev");
         jButtonPrevv.setBorder(null);
+        jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 
         jButtonNext.setBackground(new java.awt.Color(255, 0, 0));
         jButtonNext.setText("Next>>");
@@ -354,20 +535,173 @@ public class FitnessClassForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // TODO add your handling code here:
+        if (selectedFitnessClass == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Silakan pilih data terlebih dahulu.");
+
+            return;
+
+        }
+
+        int pilihan = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin menghapus data ini?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            fitnessClassController.delete(
+                    selectedFitnessClass.getClassId());
+
+            loadTable();
+
+            clearForm();
+
+            selectedFitnessClass = null;
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Data kelas fitness berhasil dihapus.");
+
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+       try {
+
+            FitnessClass fitnessClass = getFitnessClassFromForm();
+
+            fitnessClassController.save(fitnessClass);
+
+            currentPage = 1;
+
+            loadTable();
+
+            clearForm();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Data kelas fitness berhasil disimpan.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Terjadi kesalahan : " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        // TODO add your handling code here:
+       clearForm();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        // TODO add your handling code here:
+        if (currentPage < totalPage) {
+
+            currentPage++;
+
+            loadTable(fitnessClassList);
+
+        }
     }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jTableFitnessClassMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFitnessClassMouseClicked
+        int row = jTableFitnessClass.getSelectedRow();
+
+        if (row >= 0) {
+
+            int index =
+                    (currentPage - 1) * dataPerPage + row;
+
+            selectedFitnessClass =
+                    fitnessClassList.get(index);
+
+            setFitnessClassToForm(
+                    selectedFitnessClass);
+
+        }
+    }//GEN-LAST:event_jTableFitnessClassMouseClicked
+
+    private void jButtonPrevvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevvActionPerformed
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            loadTable(fitnessClassList);
+
+        }
+    }//GEN-LAST:event_jButtonPrevvActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        if (selectedFitnessClass == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Silakan pilih data yang akan diperbarui.");
+
+            return;
+
+        }
+
+        try {
+
+            FitnessClass fitnessClass = getFitnessClassFromForm();
+
+            fitnessClass.setClassId(
+                    selectedFitnessClass.getClassId());
+
+            fitnessClassController.update(fitnessClass);
+
+            loadTable();
+
+            clearForm();
+
+            selectedFitnessClass = null;
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Data kelas fitness berhasil diperbarui.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Terjadi kesalahan : " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+       String keyword = jTextFieldSearch.getText().trim();
+
+        currentPage = 1;
+
+        loadTable(fitnessClassController.search(keyword));
+    }//GEN-LAST:event_jButtonSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,7 +738,7 @@ public class FitnessClassForm extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSearch;
     private javax.swing.JButton jButtonUpdate;
     private javax.swing.JComboBox<String> jComboBoxDay;
-    private javax.swing.JComboBox<String> jComboBoxTrainer;
+    private javax.swing.JComboBox<Trainer> jComboBoxTrainer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;

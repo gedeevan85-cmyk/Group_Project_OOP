@@ -81,4 +81,10 @@ public class FitnessClassController {
         }
 
     }
+    
+    public List<FitnessClass> search(String keyword) {
+
+        return fitnessClassDAO.search(keyword);
+
+    }
 }
