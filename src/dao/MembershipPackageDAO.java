@@ -174,4 +174,61 @@ public class MembershipPackageDAO implements InterfaceDAO<MembershipPackage> {
 
     return membershipPackages;
     }
+    
+    public List<MembershipPackage> search(String keyword) {
+
+        List<MembershipPackage> membershipPackages = new ArrayList<>();
+
+        String sql = "SELECT * FROM membership_package "
+                + "WHERE package_name LIKE ? "
+                + "OR description LIKE ?";
+
+        try {
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                MembershipPackage membershipPackage =
+                        new MembershipPackage();
+
+                membershipPackage.setPackageId(
+                        resultSet.getInt("package_id"));
+
+                membershipPackage.setPackageName(
+                        resultSet.getString("package_name"));
+
+                membershipPackage.setDurationMonth(
+                        resultSet.getInt("duration_month"));
+
+                membershipPackage.setPrice(
+                        resultSet.getDouble("price"));
+
+                membershipPackage.setDescription(
+                        resultSet.getString("description"));
+
+                membershipPackage.setCreatedAt(
+                        resultSet.getTimestamp("created_at"));
+
+                membershipPackage.setUpdatedAt(
+                        resultSet.getTimestamp("updated_at"));
+
+                membershipPackages.add(membershipPackage);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return membershipPackages;
+
+    }
 }

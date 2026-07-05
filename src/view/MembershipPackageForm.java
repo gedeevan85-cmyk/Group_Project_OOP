@@ -4,19 +4,131 @@
  */
 package view;
 
+import controller.MembershipPackageController;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.MembershipPackage;
 /**
  *
  * @author user
  */
-public class MemberShipForm extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MemberShipForm.class.getName());
+public class MembershipPackageForm extends javax.swing.JFrame {
+    private MembershipPackageController membershipPackageController;
+    private List<MembershipPackage> membershipPackageList;
+    private MembershipPackage selectedMembershipPackage;
+    private int currentPage = 1;
+    private final int dataPerPage = 5;
+    private int totalPage;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MembershipPackageForm.class.getName());
 
     /**
      * Creates new form TrainerForm
      */
-    public MemberShipForm() {
+    public MembershipPackageForm() {
         initComponents();
+        membershipPackageController = new MembershipPackageController();
+
+        loadTable();
+
+        clearForm();
+    }
+    
+    private void clearForm() {
+
+        jTextFieldPackageName.setText("");
+
+        jComboBoxDuration.setSelectedIndex(0);
+
+        jTextFieldPrice.setText("");
+
+        jTextAreaDescription.setText("");
+
+        jTextFieldSearch.setText("");
+
+        jTableMembershipPackage.clearSelection();
+
+        selectedMembershipPackage = null;
+
+    }
+    
+    private MembershipPackage getMembershipPackageFromForm() {
+
+        MembershipPackage membershipPackage = new MembershipPackage();
+
+        membershipPackage.setPackageName(jTextFieldPackageName.getText().trim());
+
+        String duration = jComboBoxDuration.getSelectedItem().toString();
+
+        membershipPackage.setDurationMonth(Integer.parseInt(duration.split(" ")[0]));
+
+        membershipPackage.setPrice(Double.parseDouble(jTextFieldPrice.getText()));
+
+        membershipPackage.setDescription(jTextAreaDescription.getText());
+
+        return membershipPackage;
+
+    }
+    
+    private void setMembershipPackageToForm(
+        MembershipPackage membershipPackage) {
+
+        jTextFieldPackageName.setText(membershipPackage.getPackageName());
+
+        jComboBoxDuration.setSelectedItem(membershipPackage.getDurationMonth() + " Bulan");
+
+        jTextFieldPrice.setText(String.valueOf(membershipPackage.getPrice()));
+
+        jTextAreaDescription.setText(membershipPackage.getDescription());
+
+    }
+    
+    private void loadTable() {
+
+        loadTable(membershipPackageController.findAll());
+
+    }
+    
+    private void loadTable(List<MembershipPackage> membershipPackages) {
+
+        DefaultTableModel model = (DefaultTableModel) jTableMembershipPackage.getModel();
+
+        model.setRowCount(0);
+
+        membershipPackageList = membershipPackages;
+
+        totalPage = (int) Math.ceil((double) membershipPackageList.size() / dataPerPage);
+
+        if (totalPage == 0) {
+            totalPage = 1;
+        }
+
+        if (currentPage > totalPage) {
+            currentPage = totalPage;
+        }
+
+        int start = (currentPage - 1) * dataPerPage;
+
+        int end = Math.min(start + dataPerPage,membershipPackageList.size());
+
+        int no = start + 1;
+
+        for (int i = start; i < end; i++) {
+
+            MembershipPackage membershipPackage = membershipPackageList.get(i);
+
+            model.addRow(new Object[]{
+                no++,
+                membershipPackage.getPackageName(),
+                membershipPackage.getDurationMonth() + " Bulan",
+                membershipPackage.getPrice(),
+                membershipPackage.getDescription()
+            });
+
+        }
+
+        jLabelNoPage.setText( "Halaman " + currentPage + " / " + totalPage);
+
     }
 
     /**
@@ -49,7 +161,7 @@ public class MemberShipForm extends javax.swing.JFrame {
         jButtonUpdate = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTableMember = new javax.swing.JTable();
+        jTableMembershipPackage = new javax.swing.JTable();
         jTextFieldSearch = new javax.swing.JTextField();
         jButtonSearch = new javax.swing.JButton();
         jButtonPrevv = new javax.swing.JButton();
@@ -96,7 +208,7 @@ public class MemberShipForm extends javax.swing.JFrame {
 
         jComboBoxDuration.setBackground(new java.awt.Color(0, 0, 0));
         jComboBoxDuration.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxDuration.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxDuration.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 bulan", "3 bulan", "6 bulan", "12 bulan" }));
 
         jTextAreaDescription.setBackground(new java.awt.Color(0, 0, 0));
         jTextAreaDescription.setColumns(20);
@@ -181,24 +293,31 @@ public class MemberShipForm extends javax.swing.JFrame {
         jButtonUpdate.setBackground(new java.awt.Color(255, 0, 0));
         jButtonUpdate.setText("UPDATE");
         jButtonUpdate.setBorder(null);
+        jButtonUpdate.addActionListener(this::jButtonUpdateActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
-        jTableMember.setBackground(new java.awt.Color(0, 0, 0));
-        jTableMember.setModel(new javax.swing.table.DefaultTableModel(
+        jTableMembershipPackage.setBackground(new java.awt.Color(0, 0, 0));
+        jTableMembershipPackage.setForeground(new java.awt.Color(255, 255, 255));
+        jTableMembershipPackage.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "No", "Name", "Gender", "Birth Date", "Nomber", "Email", "Height", "Weight"
+                "No", "Package Name", "Duration", "Price", "Description"
             }
         ));
-        jScrollPane1.setViewportView(jTableMember);
-        if (jTableMember.getColumnModel().getColumnCount() > 0) {
-            jTableMember.getColumnModel().getColumn(4).setResizable(false);
+        jTableMembershipPackage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMembershipPackageMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableMembershipPackage);
+        if (jTableMembershipPackage.getColumnModel().getColumnCount() > 0) {
+            jTableMembershipPackage.getColumnModel().getColumn(3).setResizable(false);
         }
 
         jTextFieldSearch.setBackground(new java.awt.Color(255, 0, 0));
@@ -208,10 +327,12 @@ public class MemberShipForm extends javax.swing.JFrame {
         jButtonSearch.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSearch.setText("SEARCH");
         jButtonSearch.setBorder(null);
+        jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
-        jButtonPrevv.setText("<<Prevv");
+        jButtonPrevv.setText("<<Prev");
         jButtonPrevv.setBorder(null);
+        jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 
         jButtonNext.setBackground(new java.awt.Color(255, 0, 0));
         jButtonNext.setText("Next>>");
@@ -259,7 +380,6 @@ public class MemberShipForm extends javax.swing.JFrame {
 
         jButtonBack.setBackground(new java.awt.Color(255, 0, 0));
         jButtonBack.setText("BACK");
-        jButtonBack.setActionCommand("BACK");
         jButtonBack.setBorder(null);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -328,24 +448,142 @@ public class MemberShipForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // TODO add your handling code here:
+       if (selectedMembershipPackage == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data terlebih dahulu.");
+
+            return;
+
+        }
+
+        int pilihan = JOptionPane.showConfirmDialog(this,"Yakin ingin menghapus data ini?","Konfirmasi",JOptionPane.YES_NO_OPTION);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            membershipPackageController.delete(selectedMembershipPackage.getPackageId());
+
+            loadTable();
+
+            clearForm();
+
+            selectedMembershipPackage = null;
+
+            JOptionPane.showMessageDialog(this,"Data berhasil dihapus.");
+
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+        try {
+
+            MembershipPackage membershipPackage = getMembershipPackageFromForm();
+
+            membershipPackageController.save(membershipPackage);
+
+            currentPage = 1;
+
+            loadTable();
+
+            clearForm();
+
+            JOptionPane.showMessageDialog(this,"Data membership berhasil disimpan.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        // TODO add your handling code here:
+        clearForm();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        // TODO add your handling code here:
+        if (currentPage < totalPage) {
+
+            currentPage++;
+
+            loadTable(membershipPackageList);
+
+        }
     }//GEN-LAST:event_jButtonNextActionPerformed
 
     private void jTextFieldPackageNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldPackageNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldPackageNameActionPerformed
+
+    private void jTableMembershipPackageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMembershipPackageMouseClicked
+        int row = jTableMembershipPackage.getSelectedRow();
+
+       if (row >= 0) {
+
+         int index = (currentPage - 1) * dataPerPage + row;
+
+         selectedMembershipPackage = membershipPackageList.get(index);
+
+         setMembershipPackageToForm(selectedMembershipPackage);
+
+        }
+    }//GEN-LAST:event_jTableMembershipPackageMouseClicked
+
+    private void jButtonPrevvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevvActionPerformed
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            loadTable(membershipPackageList);
+
+        }
+    }//GEN-LAST:event_jButtonPrevvActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        if (selectedMembershipPackage == null) {
+
+            JOptionPane.showMessageDialog(this,"Silakan pilih data yang akan diperbarui.");
+
+            return;
+
+        }
+
+        try {
+
+            MembershipPackage membershipPackage = getMembershipPackageFromForm();
+
+            membershipPackage.setPackageId(selectedMembershipPackage.getPackageId());
+
+            membershipPackageController.update(membershipPackage);
+
+            loadTable();
+
+            clearForm();
+
+            selectedMembershipPackage = null;
+
+            JOptionPane.showMessageDialog(this,"Data membership berhasil diperbarui.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Validasi Gagal",JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,"Terjadi kesalahan : " + e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+       String keyword = jTextFieldSearch.getText().trim();
+
+        currentPage = 1;
+
+       loadTable(membershipPackageController.search(keyword));
+    }//GEN-LAST:event_jButtonSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -369,7 +607,7 @@ public class MemberShipForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MemberShipForm().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new MembershipPackageForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -396,7 +634,7 @@ public class MemberShipForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTableMember;
+    private javax.swing.JTable jTableMembershipPackage;
     private javax.swing.JTextArea jTextAreaDescription;
     private javax.swing.JTextField jTextFieldPackageName;
     private javax.swing.JTextField jTextFieldPrice;

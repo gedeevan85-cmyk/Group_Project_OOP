@@ -37,4 +37,8 @@ public class MembershipPackageController {
     public List<MembershipPackage> findAll() {
         return membershipPackageDAO.findAll();
     }
+    
+    public List<MembershipPackage> search(String keyword) {
+        return membershipPackageDAO.search(keyword);
+    }
 }
