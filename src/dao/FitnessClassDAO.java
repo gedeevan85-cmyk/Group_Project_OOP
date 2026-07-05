@@ -261,4 +261,32 @@ public List<FitnessClass> search(String keyword) {
     return fitnessClasses;
 
 }
+
+public int count() {
+
+    String sql = "SELECT COUNT(*) FROM fitness_class";
+
+    try {
+
+        PreparedStatement statement =
+                connection.prepareStatement(sql);
+
+        ResultSet resultSet =
+                statement.executeQuery();
+
+        if (resultSet.next()) {
+
+            return resultSet.getInt(1);
+
+        }
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+
+    }
+
+    return 0;
+
+}
 }

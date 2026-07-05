@@ -164,4 +164,15 @@ public class EnrollmentController {
         return bmr;
 
     }
+    
+    public List<Enrollment> search(String keyword) {
+
+        return enrollmentDAO.search(keyword);
+
+    }
+    
+    public int count() {
+
+        return enrollmentDAO.count();
+    }
 }

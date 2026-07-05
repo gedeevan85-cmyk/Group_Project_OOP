@@ -66,4 +66,9 @@ public class TrainerController {
 
         return trainerDAO.search(keyword);
     }
+    
+    public int count() {
+
+        return trainerDAO.count();
+    }
 }

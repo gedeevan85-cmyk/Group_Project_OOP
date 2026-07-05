@@ -116,4 +116,28 @@ public class FitnessClass {
     public String toString() {
         return className;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof FitnessClass)) {
+            return false;
+        }
+
+        FitnessClass other = (FitnessClass) obj;
+
+        return this.classId == other.classId;
+
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Integer.hashCode(classId);
+
+    }
 }

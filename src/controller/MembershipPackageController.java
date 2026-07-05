@@ -41,4 +41,9 @@ public class MembershipPackageController {
     public List<MembershipPackage> search(String keyword) {
         return membershipPackageDAO.search(keyword);
     }
+    
+    public int count() {
+
+        return membershipPackageDAO.count();
+    }
 }

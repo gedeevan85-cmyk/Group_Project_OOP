@@ -4,12 +4,41 @@
  */
 package view;
 
+import controller.EnrollmentController;
+import controller.MemberController;
+import controller.FitnessClassController;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import model.Enrollment;
+import model.Member;
+import model.FitnessClass;
+
+import model.workoutprogram.BulkingProgram;
+import model.workoutprogram.CuttingProgram;
+import model.workoutprogram.WeightLossProgram;
+import model.workoutprogram.MuscleGainProgram;
+import model.workoutprogram.WorkoutProgram;
 /**
  *
  * @author user
  */
 public class EnrollmentForm extends javax.swing.JFrame {
-    
+    private EnrollmentController enrollmentController;
+    private MemberController memberController;
+    private FitnessClassController fitnessClassController;
+    private List<Enrollment> enrollmentList;
+    private Enrollment selectedEnrollment;
+    private int currentPage = 1;
+    private final int dataPerPage = 5;
+    private int totalPage;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EnrollmentForm.class.getName());
 
     /**
@@ -17,7 +46,378 @@ public class EnrollmentForm extends javax.swing.JFrame {
      */
     public EnrollmentForm() {
         initComponents();
+        
+        enrollmentController = new EnrollmentController();
+
+        memberController = new MemberController();
+
+        fitnessClassController = new FitnessClassController();
+
+        loadMember();
+
+        loadFitnessClass();
+
+        loadTable();
+
+        clearForm();
     }
+    
+    private void loadMember() {
+
+        jComboMember.removeAllItems();
+
+        List<Member> members =
+                memberController.findAll();
+
+        for (Member member : members) {
+
+            jComboMember.addItem(member);
+
+        }
+
+    }
+    
+    private void loadFitnessClass() {
+
+        jComboBoxClass.removeAllItems();
+
+        List<FitnessClass> classes =
+                fitnessClassController.findAll();
+
+        for (FitnessClass fitnessClass : classes) {
+
+            jComboBoxClass.addItem(fitnessClass);
+
+        }
+
+    }
+    
+    private void clearForm() {
+
+        jComboMember.setSelectedIndex(-1);
+
+        jComboBoxClass.setSelectedIndex(-1);
+
+        jComboBoxWorkoutProgram.setSelectedIndex(0);
+
+        jComboBoxStatus.setSelectedIndex(0);
+
+        jTextFieldRegistrationDate.setText("");
+
+        jLabelMembership.setText("");
+
+        jLabelTrainer.setText("");
+
+        jLabelAge.setText("");
+
+        jLabelBMI.setText("");
+
+        jLabelBMR.setText("");
+
+        jLabelCalorieTarget.setText("");
+        
+        jLabelCalorieTarget.setText("");
+
+        jTableFitnessEnrollment.clearSelection();
+
+        selectedEnrollment = null;
+
+    }
+    
+    private Enrollment getEnrollmentFromForm() {
+
+        Enrollment enrollment = new Enrollment();
+
+        enrollment.setMember(
+                (Member) jComboMember.getSelectedItem());
+
+        enrollment.setFitnessClass(
+                (FitnessClass) jComboBoxClass.getSelectedItem());
+
+        String goal =
+                jComboBoxWorkoutProgram.getSelectedItem().toString();
+
+        switch (goal) {
+
+            case "Bulking":
+                enrollment.setWorkoutProgram(new BulkingProgram());
+                break;
+
+            case "Cutting":
+                enrollment.setWorkoutProgram(new CuttingProgram());
+                break;
+
+            case "Weight Loss":
+                enrollment.setWorkoutProgram(new WeightLossProgram());
+                break;
+
+            case "Muscle Gain":
+                enrollment.setWorkoutProgram(new MuscleGainProgram());
+                break;
+
+        }
+
+        enrollment.setEnrollmentDate(
+                Date.valueOf(jTextFieldRegistrationDate.getText().trim()));
+
+        enrollment.setStatus(
+                jComboBoxStatus.getSelectedItem().toString());
+
+        return enrollment;
+
+    }
+    
+    private void setEnrollmentToForm(Enrollment enrollment) {
+
+        jComboMember.setSelectedItem(
+                enrollment.getMember());
+
+        jComboBoxClass.setSelectedItem(
+                enrollment.getFitnessClass());
+
+        String goal = "";
+
+        if (enrollment.getWorkoutProgram() instanceof BulkingProgram) {
+
+            goal = "Bulking";
+
+        } else if (enrollment.getWorkoutProgram() instanceof CuttingProgram) {
+
+            goal = "Cutting";
+
+        } else if (enrollment.getWorkoutProgram() instanceof WeightLossProgram) {
+
+            goal = "Weight Loss";
+
+        } else if (enrollment.getWorkoutProgram() instanceof MuscleGainProgram) {
+
+            goal = "Muscle Gain";
+
+        }
+
+        jComboBoxWorkoutProgram.setSelectedItem(goal);
+
+        jTextFieldRegistrationDate.setText(
+                enrollment.getEnrollmentDate().toString());
+
+        jComboBoxStatus.setSelectedItem(
+                enrollment.getStatus());
+
+    }
+    
+    private void loadTable() {
+
+        loadTable(enrollmentController.findAll());
+
+    }
+    
+    private void loadTable(List<Enrollment> enrollments) {
+
+        DefaultTableModel model =
+                (DefaultTableModel) jTableFitnessEnrollment.getModel();
+
+        model.setRowCount(0);
+
+        enrollmentList = enrollments;
+
+        totalPage = (int) Math.ceil(
+                (double) enrollmentList.size() / dataPerPage);
+
+        if (totalPage == 0) {
+
+            totalPage = 1;
+
+        }
+
+        if (currentPage > totalPage) {
+
+            currentPage = totalPage;
+
+        }
+
+        int start = (currentPage - 1) * dataPerPage;
+
+        int end = Math.min(
+                start + dataPerPage,
+                enrollmentList.size());
+
+        int no = start + 1;
+
+        for (int i = start; i < end; i++) {
+
+            Enrollment enrollment = enrollmentList.get(i);
+
+            String goal = "";
+
+            if (enrollment.getWorkoutProgram() instanceof BulkingProgram) {
+
+                goal = "Bulking";
+
+            } else if (enrollment.getWorkoutProgram() instanceof CuttingProgram) {
+
+                goal = "Cutting";
+
+            } else if (enrollment.getWorkoutProgram() instanceof WeightLossProgram) {
+
+                goal = "Weight Loss";
+
+            } else if (enrollment.getWorkoutProgram() instanceof MuscleGainProgram) {
+
+                goal = "Muscle Gain";
+
+            }
+
+            model.addRow(new Object[]{
+
+                no++,
+
+                enrollment.getMember().getName(),
+
+                enrollment.getMember()
+                        .getMembershipPackage()
+                        .getPackageName(),
+
+                enrollment.getFitnessClass().getClassName(),
+
+                enrollment.getFitnessClass()
+                        .getTrainer()
+                        .getName(),
+
+                enrollment.getEnrollmentDate(),
+
+                enrollment.getStatus(),
+
+                enrollmentController.calculateAge(
+                        enrollment.getMember()),
+
+                String.format("%.2f",
+                        enrollmentController.calculateBMI(
+                                enrollment.getMember())),
+
+                String.format("%.2f",
+                        enrollmentController.calculateBMR(
+                                enrollment.getMember())),
+
+                goal,
+
+                String.format("%.2f",
+                        enrollment.getTargetCalories())
+
+            });
+
+        }
+
+        jLabelNoPage.setText(
+                "Halaman "
+                + currentPage
+                + " / "
+                + totalPage);
+
+    }
+    
+    private void updateMemberInformation() {
+
+        Member member = (Member) jComboMember.getSelectedItem();
+        
+        if (member == null) {
+            return;
+        }
+
+        if (member.getMembershipPackage() == null) {
+
+            System.out.println("Membership NULL");
+
+            return;
+
+        }
+
+        if (member == null) {
+            return;
+        }
+
+        jLabelMembership.setText(
+                member.getMembershipPackage().getPackageName());
+
+        jLabelAge.setText(
+                String.valueOf(
+                        enrollmentController.calculateAge(member)));
+
+        jLabelBMI.setText(
+                String.format("%.2f",
+                        enrollmentController.calculateBMI(member)));
+
+        jLabelBMR.setText(
+                String.format("%.2f",
+                        enrollmentController.calculateBMR(member)));
+
+    }
+    
+    private void updateFitnessClassInformation() {
+
+        FitnessClass fitnessClass =
+                (FitnessClass) jComboBoxClass.getSelectedItem();
+
+        if (fitnessClass == null) {
+            return;
+        }
+
+        jLabelTrainer.setText(
+                fitnessClass.getTrainer().getName());
+
+    }
+    
+    private void updateTargetCalories() {
+
+        Member member =
+                (Member) jComboMember.getSelectedItem();
+
+        if (member == null) {
+
+            jLabelCalorieTarget.setText("");
+
+            return;
+
+        }
+
+        String goal =
+                jComboBoxWorkoutProgram.getSelectedItem().toString();
+
+        WorkoutProgram workoutProgram = null;
+
+        switch (goal) {
+
+            case "Bulking":
+                workoutProgram = new BulkingProgram();
+                break;
+
+            case "Cutting":
+                workoutProgram = new CuttingProgram();
+                break;
+
+            case "Weight Loss":
+                workoutProgram = new WeightLossProgram();
+                break;
+
+            case "Muscle Gain":
+                workoutProgram = new MuscleGainProgram();
+                break;
+
+        }
+
+        double bmr =
+            enrollmentController.calculateBMR(member);
+        
+        double calories =
+            enrollmentController.calculateTargetCalories(
+                    bmr,
+                    workoutProgram);
+
+        jLabelCalorieTarget.setText(
+                String.format("%.2f kcal", calories));
+
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -52,8 +452,8 @@ public class EnrollmentForm extends javax.swing.JFrame {
         jLabelAge = new javax.swing.JLabel();
         jLabelBMI = new javax.swing.JLabel();
         jLabelBMR = new javax.swing.JLabel();
-        jLabelWorkoutProgram = new javax.swing.JLabel();
         jLabelCalorieTarget = new javax.swing.JLabel();
+        jComboBoxWorkoutProgram = new javax.swing.JComboBox<>();
         jButtonCancel = new javax.swing.JButton();
         jButtonDelete = new javax.swing.JButton();
         jButtonSave = new javax.swing.JButton();
@@ -108,11 +508,11 @@ public class EnrollmentForm extends javax.swing.JFrame {
 
         jComboMember.setBackground(new java.awt.Color(0, 0, 0));
         jComboMember.setForeground(new java.awt.Color(255, 255, 255));
-        jComboMember.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboMember.addActionListener(this::jComboMemberActionPerformed);
 
         jComboBoxClass.setBackground(new java.awt.Color(0, 0, 0));
         jComboBoxClass.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxClass.addActionListener(this::jComboBoxClassActionPerformed);
 
         jLabelMembership.setForeground(new java.awt.Color(255, 255, 255));
         jLabelMembership.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(255, 255, 255))); // NOI18N
@@ -135,7 +535,7 @@ public class EnrollmentForm extends javax.swing.JFrame {
 
         jComboBoxStatus.setBackground(new java.awt.Color(0, 0, 0));
         jComboBoxStatus.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Active", "Completed", "Cancelled" }));
 
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Workout Program");
@@ -152,11 +552,12 @@ public class EnrollmentForm extends javax.swing.JFrame {
         jLabelBMR.setForeground(new java.awt.Color(255, 255, 255));
         jLabelBMR.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
-        jLabelWorkoutProgram.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelWorkoutProgram.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(255, 255, 255))); // NOI18N
-
         jLabelCalorieTarget.setForeground(new java.awt.Color(255, 255, 255));
         jLabelCalorieTarget.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(255, 255, 255))); // NOI18N
+
+        jComboBoxWorkoutProgram.setBackground(new java.awt.Color(0, 0, 0));
+        jComboBoxWorkoutProgram.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bulking", "Cutting", "Weight Loss", "Muscle Gain" }));
+        jComboBoxWorkoutProgram.addActionListener(this::jComboBoxWorkoutProgramActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -204,8 +605,8 @@ public class EnrollmentForm extends javax.swing.JFrame {
                             .addComponent(jLabel15))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelWorkoutProgram, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelCalorieTarget, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jLabelCalorieTarget, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBoxWorkoutProgram, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(115, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -231,9 +632,9 @@ public class EnrollmentForm extends javax.swing.JFrame {
                         .addGap(2, 2, 2)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelWorkoutProgram, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jComboBoxWorkoutProgram, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
@@ -288,10 +689,12 @@ public class EnrollmentForm extends javax.swing.JFrame {
         jButtonUpdate.setBackground(new java.awt.Color(255, 0, 0));
         jButtonUpdate.setText("UPDATE");
         jButtonUpdate.setBorder(null);
+        jButtonUpdate.addActionListener(this::jButtonUpdateActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
         jTableFitnessEnrollment.setBackground(new java.awt.Color(0, 0, 0));
+        jTableFitnessEnrollment.setForeground(new java.awt.Color(255, 255, 255));
         jTableFitnessEnrollment.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null},
@@ -303,6 +706,11 @@ public class EnrollmentForm extends javax.swing.JFrame {
                 "No", "Member", "Membership", "Class", "Trainer", "Registration ", "Status", "Age", "BMI", "BMR", "Program", "Calorie"
             }
         ));
+        jTableFitnessEnrollment.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFitnessEnrollmentMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableFitnessEnrollment);
         if (jTableFitnessEnrollment.getColumnModel().getColumnCount() > 0) {
             jTableFitnessEnrollment.getColumnModel().getColumn(4).setResizable(false);
@@ -315,10 +723,12 @@ public class EnrollmentForm extends javax.swing.JFrame {
         jButtonSearch.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSearch.setText("SEARCH");
         jButtonSearch.setBorder(null);
+        jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
-        jButtonPrevv.setText("<<Prevv");
+        jButtonPrevv.setText("<<Prev");
         jButtonPrevv.setBorder(null);
+        jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 
         jButtonNext.setBackground(new java.awt.Color(255, 0, 0));
         jButtonNext.setText("Next>>");
@@ -370,6 +780,7 @@ public class EnrollmentForm extends javax.swing.JFrame {
         jButton1.setBackground(new java.awt.Color(255, 0, 0));
         jButton1.setText("BACK");
         jButton1.setBorder(null);
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -432,20 +843,213 @@ public class EnrollmentForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // TODO add your handling code here:
+        if (selectedEnrollment == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pilih data terlebih dahulu.");
+
+            return;
+
+        }
+
+        int pilihan = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin menghapus enrollment ini?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            enrollmentController.delete(
+                    selectedEnrollment.getEnrollmentId());
+
+            loadTable();
+
+            clearForm();
+
+            selectedEnrollment = null;
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Enrollment berhasil dihapus.");
+
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+        try {
+
+            Enrollment enrollment = getEnrollmentFromForm();
+
+            enrollmentController.save(enrollment);
+
+            currentPage = 1;
+
+            loadTable();
+
+            clearForm();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Enrollment berhasil disimpan.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Terjadi kesalahan : " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        // TODO add your handling code here:
+       jTextFieldSearch.setText("");
+
+        clearForm();
+
+        currentPage = 1;
+
+        loadTable();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        // TODO add your handling code here:
+        if (currentPage < totalPage) {
+
+            currentPage++;
+
+            loadTable(enrollmentList);
+
+        }
     }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jTableFitnessEnrollmentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFitnessEnrollmentMouseClicked
+        int row =
+            jTableFitnessEnrollment.getSelectedRow();
+
+        if (row >= 0) {
+
+            int index =
+                    (currentPage - 1)
+                    * dataPerPage
+                    + row;
+
+            selectedEnrollment =
+                    enrollmentList.get(index);
+
+            setEnrollmentToForm(
+                    selectedEnrollment);
+            
+            updateTargetCalories();
+
+        }
+    }//GEN-LAST:event_jTableFitnessEnrollmentMouseClicked
+
+    private void jButtonPrevvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevvActionPerformed
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            loadTable(enrollmentList);
+
+        }
+    }//GEN-LAST:event_jButtonPrevvActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        if (selectedEnrollment == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pilih data yang akan diperbarui.");
+
+            return;
+
+        }
+
+        try {
+
+            Enrollment enrollment = getEnrollmentFromForm();
+
+            enrollment.setEnrollmentId(
+                    selectedEnrollment.getEnrollmentId());
+
+            enrollmentController.update(enrollment);
+
+            loadTable();
+
+            clearForm();
+
+            selectedEnrollment = null;
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Enrollment berhasil diperbarui.");
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Terjadi kesalahan : " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jComboMemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboMemberActionPerformed
+       updateMemberInformation();
+       updateMemberInformation();
+    }//GEN-LAST:event_jComboMemberActionPerformed
+
+    private void jComboBoxClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClassActionPerformed
+        updateFitnessClassInformation();
+    }//GEN-LAST:event_jComboBoxClassActionPerformed
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+      String keyword =
+        jTextFieldSearch.getText().trim();
+
+        currentPage = 1;
+
+        if (keyword.isEmpty()) {
+
+            loadTable();
+
+        } else {
+
+            loadTable(
+                    enrollmentController.search(keyword));
+
+        }
+    }//GEN-LAST:event_jButtonSearchActionPerformed
+
+    private void jComboBoxWorkoutProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxWorkoutProgramActionPerformed
+        updateTargetCalories();
+    }//GEN-LAST:event_jComboBoxWorkoutProgramActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        new DashboardForm().setVisible(true);
+
+            dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -481,9 +1085,10 @@ public class EnrollmentForm extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSave;
     private javax.swing.JButton jButtonSearch;
     private javax.swing.JButton jButtonUpdate;
-    private javax.swing.JComboBox<String> jComboBoxClass;
+    private javax.swing.JComboBox<FitnessClass> jComboBoxClass;
     private javax.swing.JComboBox<String> jComboBoxStatus;
-    private javax.swing.JComboBox<String> jComboMember;
+    private javax.swing.JComboBox<String> jComboBoxWorkoutProgram;
+    private javax.swing.JComboBox<Member> jComboMember;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -506,7 +1111,6 @@ public class EnrollmentForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMembership;
     private javax.swing.JLabel jLabelNoPage;
     private javax.swing.JLabel jLabelTrainer;
-    private javax.swing.JLabel jLabelWorkoutProgram;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

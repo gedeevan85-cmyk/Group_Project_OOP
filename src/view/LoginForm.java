@@ -4,12 +4,16 @@
  */
 package view;
 
+import controller.AuthController;
+import model.Admin;
+import javax.swing.JOptionPane;
 /**
  *
  * @author user
  */
 public class LoginForm extends javax.swing.JFrame {
-    
+    private AuthController authController;
+    private char defaultEchoChar;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
     /**
@@ -17,6 +21,29 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
+        authController = new AuthController();
+
+        defaultEchoChar = jPasswordFieldPassword.getEchoChar();
+    }
+    
+    private String getEmail() {
+
+        return jTextFieldEmail.getText().trim();
+
+    }
+    
+    private String getPassword() {
+
+        return String.valueOf(jPasswordFieldPassword.getPassword());
+
+    }
+    
+    private void clearForm() {
+
+        jTextFieldEmail.setText("");
+
+        jPasswordFieldPassword.setText("");
+
     }
 
     /**
@@ -75,15 +102,18 @@ public class LoginForm extends javax.swing.JFrame {
         jCheckBox1.setBackground(new java.awt.Color(51, 51, 51));
         jCheckBox1.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBox1.setText("Show Password");
+        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
 
         jButton1.setBackground(new java.awt.Color(51, 51, 51));
         jButton1.setForeground(new java.awt.Color(255, 0, 0));
         jButton1.setText("Forget Password ?");
         jButton1.setBorder(null);
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setBackground(new java.awt.Color(255, 0, 0));
         jButton2.setText("LOGIN");
         jButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Don't Have An Account Yet?");
@@ -92,6 +122,7 @@ public class LoginForm extends javax.swing.JFrame {
         jButton3.setForeground(new java.awt.Color(255, 0, 0));
         jButton3.setText("SIGN IN ");
         jButton3.setBorder(null);
+        jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/message.png"))); // NOI18N
 
@@ -206,6 +237,60 @@ public class LoginForm extends javax.swing.JFrame {
     private void jTextFieldEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldEmailActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldEmailActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        if (jCheckBox1.isSelected()) {
+
+        jPasswordFieldPassword.setEchoChar((char) 0);
+
+    } else {
+
+        jPasswordFieldPassword.setEchoChar(defaultEchoChar);
+
+    }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+
+            String email = getEmail();
+
+            String password = getPassword();
+
+            Admin admin =
+                    authController.login(
+                            email,
+                            password);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Selamat Datang, "
+                    + admin.getName());
+
+            new DashboardForm().setVisible(true);
+
+            dispose();
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage());
+
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        new RegisterForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        new ForgetPasswordForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

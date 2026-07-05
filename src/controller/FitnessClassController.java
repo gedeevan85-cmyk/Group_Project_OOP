@@ -87,4 +87,9 @@ public class FitnessClassController {
         return fitnessClassDAO.search(keyword);
 
     }
+    
+    public int count() {
+
+        return fitnessClassDAO.count();
+    }
 }

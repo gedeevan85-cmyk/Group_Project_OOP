@@ -4,12 +4,16 @@
  */
 package view;
 
+import controller.AuthController;
+import model.Admin;
+import javax.swing.JOptionPane;
 /**
  *
  * @author user
  */
 public class RegisterForm extends javax.swing.JFrame {
-    
+    private AuthController authController;
+    private char defaultEchoChar;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RegisterForm.class.getName());
 
     /**
@@ -17,6 +21,46 @@ public class RegisterForm extends javax.swing.JFrame {
      */
     public RegisterForm() {
         initComponents();
+        authController = new AuthController();
+        defaultEchoChar = jPasswordFieldPassword1.getEchoChar();
+    }
+    
+    private Admin getAdminFromForm() {
+
+        Admin admin = new Admin();
+
+        String firstName =
+                jTextFieldFirstName1.getText().trim();
+
+        String lastName =
+                jTextFieldLastName.getText().trim();
+
+        admin.setName(
+                firstName + " " + lastName);
+
+        admin.setEmail(
+                jTextFieldEmail.getText().trim());
+
+        admin.setPassword(
+                String.valueOf(
+                        jPasswordFieldPassword1.getPassword()));
+
+        return admin;
+
+    }
+    
+    private void clearForm() {
+
+        jTextFieldFirstName1.setText("");
+
+        jTextFieldLastName.setText("");
+
+        jTextFieldEmail.setText("");
+
+        jPasswordFieldPassword1.setText("");
+
+        jPasswordFieldConfirmPassword.setText("");
+
     }
 
     /**
@@ -80,11 +124,13 @@ public class RegisterForm extends javax.swing.JFrame {
         jCheckBox1.setBackground(new java.awt.Color(51, 51, 51));
         jCheckBox1.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBox1.setText("Show Password");
+        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
 
         jButtonSignIn.setBackground(new java.awt.Color(255, 0, 0));
         jButtonSignIn.setText("SIGN IN");
         jButtonSignIn.setActionCommand("SIGN IN ");
         jButtonSignIn.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
+        jButtonSignIn.addActionListener(this::jButtonSignInActionPerformed);
 
         jTextFieldLastName.setBackground(new java.awt.Color(51, 51, 51));
         jTextFieldLastName.setForeground(new java.awt.Color(255, 255, 255));
@@ -126,6 +172,7 @@ public class RegisterForm extends javax.swing.JFrame {
         jButtonBack.setText("BACK");
         jButtonBack.setActionCommand("SIGN IN ");
         jButtonBack.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
+        jButtonBack.addActionListener(this::jButtonBackActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -186,7 +233,6 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldFirstName1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
-                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
@@ -256,6 +302,68 @@ public class RegisterForm extends javax.swing.JFrame {
     private void jTextFieldFirstName1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldFirstName1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldFirstName1ActionPerformed
+
+    private void jButtonSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSignInActionPerformed
+       try {
+
+            String password =
+                    String.valueOf(
+                            jPasswordFieldPassword1.getPassword());
+
+            String confirmPassword =
+                    String.valueOf(
+                            jPasswordFieldConfirmPassword.getPassword());
+
+            if (!password.equals(confirmPassword)) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Konfirmasi password tidak sama.");
+
+                return;
+
+            }
+
+            Admin admin = getAdminFromForm();
+
+            authController.register(admin);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Register berhasil.");
+
+            clearForm();
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage());
+
+        }
+    }//GEN-LAST:event_jButtonSignInActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        if (jCheckBox1.isSelected()) {
+
+            jPasswordFieldPassword1.setEchoChar((char) 0);
+
+            jPasswordFieldConfirmPassword.setEchoChar((char) 0);
+
+        } else {
+
+            jPasswordFieldPassword1.setEchoChar(defaultEchoChar);
+
+            jPasswordFieldConfirmPassword.setEchoChar(defaultEchoChar);
+
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
+       new LoginForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButtonBackActionPerformed
 
     /**
      * @param args the command line arguments

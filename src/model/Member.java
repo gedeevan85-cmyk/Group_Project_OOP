@@ -93,4 +93,33 @@ public class Member extends Person{
     public void setUpdatedAt(Timestamp updated_at) {
         this.updated_at = updated_at;
     }
+    
+     @Override
+    public String toString() {
+        return getName();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Member)) {
+            return false;
+        }
+
+        Member other = (Member) obj;
+
+        return this.memberId == other.memberId;
+
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Integer.hashCode(memberId);
+
+    }
 }

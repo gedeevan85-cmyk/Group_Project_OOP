@@ -71,4 +71,10 @@ public class MemberController {
         return memberDAO.search(keyword);
 
     }
+    
+        public int count() {
+
+        return memberDAO.count();
+
+    }
 }

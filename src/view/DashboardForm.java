@@ -3,20 +3,58 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
+import controller.MemberController;
+import controller.TrainerController;
+import controller.FitnessClassController;
+import controller.EnrollmentController;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author user
  */
-public class DasboardForm extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DasboardForm.class.getName());
+public class DashboardForm extends javax.swing.JFrame {
+    private MemberController memberController;
+    private TrainerController trainerController;
+    private FitnessClassController fitnessClassController;
+    private EnrollmentController enrollmentController;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DashboardForm.class.getName());
 
     /**
      * Creates new form TrainerForm
      */
-    public DasboardForm() {
+    public DashboardForm() {
         initComponents();
+        
+        memberController = new MemberController();
+
+        trainerController = new TrainerController();
+
+        fitnessClassController = new FitnessClassController();
+
+        enrollmentController = new EnrollmentController();
+        
+        loadCounter();
+    }
+    
+    private void loadCounter() {
+
+        jLabelTotalMember.setText(
+                String.valueOf(
+                        memberController.count()));
+
+        jLabelTotalTrainer.setText(
+                String.valueOf(
+                        trainerController.count()));
+
+        jLabelTotalFitnessClass1.setText(
+                String.valueOf(
+                        fitnessClassController.count()));
+
+        jLabelTotalEnrollment.setText(
+                String.valueOf(
+                        enrollmentController.count()));
+
     }
 
     /**
@@ -74,6 +112,7 @@ public class DasboardForm extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("MEMBERSHIP");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setBackground(new java.awt.Color(102, 102, 102));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -85,22 +124,26 @@ public class DasboardForm extends javax.swing.JFrame {
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("TRAINER");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jButton4.setBackground(new java.awt.Color(102, 102, 102));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("FITNESS CLASS");
+        jButton4.addActionListener(this::jButton4ActionPerformed);
 
         jButton5.setBackground(new java.awt.Color(102, 102, 102));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton5.setForeground(new java.awt.Color(255, 255, 255));
         jButton5.setText("ENROLLMENT");
+        jButton5.addActionListener(this::jButton5ActionPerformed);
 
         jButton6.setBackground(new java.awt.Color(51, 51, 51));
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton6.setForeground(new java.awt.Color(255, 0, 0));
         jButton6.setText("LOGOUT");
         jButton6.setBorder(null);
+        jButton6.addActionListener(this::jButton6ActionPerformed);
 
         jLabel2.setForeground(new java.awt.Color(51, 51, 51));
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/logout.png"))); // NOI18N
@@ -236,7 +279,7 @@ public class DasboardForm extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(93, 93, 93)
                         .addComponent(jLabelTotalTrainer)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,8 +422,56 @@ public class DasboardForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        new MemberForm().setVisible(true);
+
+        dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        new MembershipPackageForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+         new TrainerForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        new FitnessClassForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+         new EnrollmentForm().setVisible(true);
+
+        dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        int pilihan = JOptionPane.showConfirmDialog(
+
+            this,
+
+            "Apakah Anda yakin ingin logout?",
+
+            "Konfirmasi Logout",
+
+            JOptionPane.YES_NO_OPTION
+
+        );
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+
+            new LoginForm().setVisible(true);
+
+            dispose();
+
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,7 +495,7 @@ public class DasboardForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new DasboardForm().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new DashboardForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

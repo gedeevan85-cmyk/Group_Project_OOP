@@ -145,12 +145,7 @@ public class MembershipPackageDAO implements InterfaceDAO<MembershipPackage> {
 
         ResultSet resultSet = statement.executeQuery();
 
-        System.out.println("Query membership_package dijalankan");
-
         while (resultSet.next()) {
-
-            System.out.println("Data ditemukan : "
-                    + resultSet.getString("package_name"));
 
             MembershipPackage membershipPackage = new MembershipPackage();
 
@@ -163,8 +158,6 @@ public class MembershipPackageDAO implements InterfaceDAO<MembershipPackage> {
             membershipPackages.add(membershipPackage);
 
         }
-
-        System.out.println("Total List = " + membershipPackages.size());
 
     } catch (SQLException e) {
 
@@ -229,6 +222,34 @@ public class MembershipPackageDAO implements InterfaceDAO<MembershipPackage> {
         }
 
         return membershipPackages;
+
+    }
+    
+    public int count() {
+
+        String sql = "SELECT COUNT(*) FROM membership_package";
+
+        try {
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+
+            ResultSet resultSet =
+                    statement.executeQuery();
+
+            if (resultSet.next()) {
+
+                return resultSet.getInt(1);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return 0;
 
     }
 }

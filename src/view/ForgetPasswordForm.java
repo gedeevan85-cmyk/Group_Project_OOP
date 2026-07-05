@@ -4,12 +4,15 @@
  */
 package view;
 
+import controller.AuthController;
+import javax.swing.JOptionPane;
 /**
  *
  * @author user
  */
 public class ForgetPasswordForm extends javax.swing.JFrame {
-    
+    private AuthController authController;
+    private char defaultEchoChar;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ForgetPasswordForm.class.getName());
 
     /**
@@ -17,6 +20,31 @@ public class ForgetPasswordForm extends javax.swing.JFrame {
      */
     public ForgetPasswordForm() {
         initComponents();
+        authController = new AuthController();
+
+        defaultEchoChar = jPasswordFieldConfirmPassword.getEchoChar();
+    }
+    
+    private String getEmail() {
+
+        return jTextFieldEmail.getText().trim();
+
+    }
+    
+    private String getPassword() {
+
+        return String.valueOf(jPasswordFieldConfirmPassword.getPassword());
+
+    }
+    
+    private void clearForm() {
+
+        jTextFieldEmail.setText("");
+
+        jPasswordFieldConfirmPassword.setText("");
+
+        jPasswordField1.setText("");
+
     }
 
     /**
@@ -72,6 +100,7 @@ public class ForgetPasswordForm extends javax.swing.JFrame {
         jCheckBox1.setBackground(new java.awt.Color(51, 51, 51));
         jCheckBox1.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBox1.setText("Show Password");
+        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
 
         jButtonReset.setBackground(new java.awt.Color(255, 0, 0));
         jButtonReset.setText("RESET");
@@ -234,12 +263,68 @@ public class ForgetPasswordForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldEmailActionPerformed
 
     private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResetActionPerformed
-        // TODO add your handling code here:
+        try {
+
+            String password = getPassword();
+
+            String confirmPassword =
+                    String.valueOf(
+                            jPasswordField1.getPassword());
+
+            if (!password.equals(confirmPassword)) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Konfirmasi password tidak sama.");
+
+                return;
+
+            }
+
+            authController.forgotPassword(
+                    getEmail(),
+                    password);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Password berhasil diubah.");
+
+            clearForm();
+
+            new LoginForm().setVisible(true);
+
+            dispose();
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage());
+
+        }
     }//GEN-LAST:event_jButtonResetActionPerformed
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
-        // TODO add your handling code here:
+       new LoginForm().setVisible(true);
+
+       dispose();
     }//GEN-LAST:event_jButtonBackActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+       if (jCheckBox1.isSelected()) {
+
+            jPasswordFieldConfirmPassword.setEchoChar((char) 0);
+
+            jPasswordField1.setEchoChar((char) 0);
+
+        } else {
+
+            jPasswordFieldConfirmPassword.setEchoChar(defaultEchoChar);
+
+            jPasswordField1.setEchoChar(defaultEchoChar);
+
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     /**
      * @param args the command line arguments

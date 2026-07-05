@@ -225,4 +225,32 @@ public class TrainerDAO implements InterfaceDAO<Trainer>{
 
         return trainers;
     }
+    
+    public int count() {
+
+        String sql = "SELECT COUNT(*) FROM trainer";
+
+        try {
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+
+            ResultSet resultSet =
+                    statement.executeQuery();
+
+            if (resultSet.next()) {
+
+                return resultSet.getInt(1);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return 0;
+
+    }
 }

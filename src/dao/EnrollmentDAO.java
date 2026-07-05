@@ -264,4 +264,108 @@ public List<Enrollment> findAll() {
     return enrollments;
 
 }
+
+public List<Enrollment> search(String keyword) {
+
+    List<Enrollment> enrollments = new ArrayList<>();
+
+    String sql = "SELECT * FROM enrollment e "
+            + "INNER JOIN member m ON e.member_id = m.member_id "
+            + "INNER JOIN fitness_class fc ON e.class_id = fc.class_id "
+            + "INNER JOIN trainer t ON fc.trainer_id = t.trainer_id "
+            + "WHERE m.name LIKE ? "
+            + "OR fc.class_name LIKE ? "
+            + "OR t.name LIKE ? "
+            + "OR e.goal LIKE ? "
+            + "OR e.status LIKE ?";
+
+    try {
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        for (int i = 1; i <= 5; i++) {
+
+            statement.setString(i, "%" + keyword + "%");
+
+        }
+
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+
+            Enrollment enrollment = new Enrollment();
+
+            enrollment.setEnrollmentId(
+                    resultSet.getInt("enrollment_id"));
+
+            int memberId = resultSet.getInt("member_id");
+            Member member = memberDAO.findById(memberId);
+            enrollment.setMember(member);
+
+            int classId = resultSet.getInt("class_id");
+            FitnessClass fitnessClass =
+                    fitnessClassDAO.findById(classId);
+            enrollment.setFitnessClass(fitnessClass);
+
+            String goal = resultSet.getString("goal");
+
+            enrollment.setWorkoutProgram(
+                    createWorkoutProgram(goal));
+
+            enrollment.setTargetCalories(
+                    resultSet.getDouble("target_calories"));
+
+            enrollment.setEnrollmentDate(
+                    resultSet.getDate("enrollment_date"));
+
+            enrollment.setStatus(
+                    resultSet.getString("status"));
+
+            enrollment.setCreatedAt(
+                    resultSet.getTimestamp("created_at"));
+
+            enrollment.setUpdatedAt(
+                    resultSet.getTimestamp("updated_at"));
+
+            enrollments.add(enrollment);
+
+        }
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+
+    }
+
+    return enrollments;
+
+}
+
+public int count() {
+
+    String sql = "SELECT COUNT(*) FROM enrollment";
+
+    try {
+
+        PreparedStatement statement =
+                connection.prepareStatement(sql);
+
+        ResultSet resultSet =
+                statement.executeQuery();
+
+        if (resultSet.next()) {
+
+            return resultSet.getInt(1);
+
+        }
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+
+    }
+
+    return 0;
+
+}
 }

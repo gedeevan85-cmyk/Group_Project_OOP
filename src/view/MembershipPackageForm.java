@@ -381,6 +381,7 @@ public class MembershipPackageForm extends javax.swing.JFrame {
         jButtonBack.setBackground(new java.awt.Color(255, 0, 0));
         jButtonBack.setText("BACK");
         jButtonBack.setBorder(null);
+        jButtonBack.addActionListener(this::jButtonBackActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -578,12 +579,28 @@ public class MembershipPackageForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonUpdateActionPerformed
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
-       String keyword = jTextFieldSearch.getText().trim();
+      String keyword =
+        jTextFieldSearch.getText().trim();
 
         currentPage = 1;
 
-       loadTable(membershipPackageController.search(keyword));
+        if (keyword.isEmpty()) {
+
+            loadTable();
+
+        } else {
+
+            loadTable(
+                    membershipPackageController.search(keyword));
+
+        }
     }//GEN-LAST:event_jButtonSearchActionPerformed
+
+    private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
+       new DashboardForm().setVisible(true);
+
+            dispose();
+    }//GEN-LAST:event_jButtonBackActionPerformed
 
     /**
      * @param args the command line arguments
