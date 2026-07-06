@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.MembershipPackageController;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -27,10 +27,9 @@ public class MembershipPackageForm extends javax.swing.JFrame {
      */
     public MembershipPackageForm() {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         membershipPackageController = new MembershipPackageController();
-
         loadTable();
-
         clearForm();
     }
     
@@ -75,7 +74,7 @@ public class MembershipPackageForm extends javax.swing.JFrame {
 
         jTextFieldPackageName.setText(membershipPackage.getPackageName());
 
-        jComboBoxDuration.setSelectedItem(membershipPackage.getDurationMonth() + " Bulan");
+        jComboBoxDuration.setSelectedItem(membershipPackage.getDurationMonth() + " bulan");
 
         jTextFieldPrice.setText(String.valueOf(membershipPackage.getPrice()));
 
@@ -120,7 +119,7 @@ public class MembershipPackageForm extends javax.swing.JFrame {
             model.addRow(new Object[]{
                 no++,
                 membershipPackage.getPackageName(),
-                membershipPackage.getDurationMonth() + " Bulan",
+                membershipPackage.getDurationMonth() + " bulan",
                 membershipPackage.getPrice(),
                 membershipPackage.getDescription()
             });

@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.FitnessClassController;
 import controller.TrainerController;
 import java.sql.Time;
@@ -31,7 +31,7 @@ public class FitnessClassForm extends javax.swing.JFrame {
      */
     public FitnessClassForm() {
         initComponents();
-        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         fitnessClassController = new FitnessClassController();
         trainerController = new TrainerController();
         loadTrainer();

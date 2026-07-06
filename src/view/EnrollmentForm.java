@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.EnrollmentController;
 import controller.MemberController;
 import controller.FitnessClassController;
@@ -46,7 +46,7 @@ public class EnrollmentForm extends javax.swing.JFrame {
      */
     public EnrollmentForm() {
         initComponents();
-        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         enrollmentController = new EnrollmentController();
 
         memberController = new MemberController();

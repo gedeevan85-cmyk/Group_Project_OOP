@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.AuthController;
 import model.Admin;
 import javax.swing.JOptionPane;
@@ -23,6 +23,7 @@ public class RegisterForm extends javax.swing.JFrame {
         initComponents();
         authController = new AuthController();
         defaultEchoChar = jPasswordFieldPassword1.getEchoChar();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
     
     private Admin getAdminFromForm() {

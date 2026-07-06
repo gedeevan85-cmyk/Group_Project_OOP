@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.MemberController;
 import controller.MembershipPackageController;
 import model.Member;
@@ -30,7 +30,7 @@ public class MemberForm extends javax.swing.JFrame {
      */
     public MemberForm() {
         initComponents();
-        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         memberController = new MemberController();
         membershipPackageController = new MembershipPackageController();
 

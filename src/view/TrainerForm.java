@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.TrainerController;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -27,7 +27,7 @@ public class TrainerForm extends javax.swing.JFrame {
      */
     public TrainerForm() {
         initComponents();
-        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         trainerController = new TrainerController();
 
         loadTable();

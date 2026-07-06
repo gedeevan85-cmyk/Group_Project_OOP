@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
-
+import java.util.Objects;
 import java.sql.Timestamp;
 /**
  *
@@ -32,6 +32,19 @@ public class MembershipPackage {
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    MembershipPackage other = (MembershipPackage) obj;
+    return this.packageId == other.packageId;
+}
+    
+
+    @Override
+    public int hashCode() {
+    return Objects.hash(packageId);
+}
 
     public int getPackageId() {
         return packageId;

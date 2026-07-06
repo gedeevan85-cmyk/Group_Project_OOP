@@ -8,6 +8,7 @@ import controller.TrainerController;
 import controller.FitnessClassController;
 import controller.EnrollmentController;
 import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 
 /**
  *
@@ -26,6 +27,7 @@ public class DashboardForm extends javax.swing.JFrame {
     public DashboardForm() {
         initComponents();
         
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         memberController = new MemberController();
 
         trainerController = new TrainerController();

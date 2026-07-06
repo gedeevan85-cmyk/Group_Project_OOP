@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
-
+import java.util.Objects;
 import java.sql.Timestamp;
 /**
  *
@@ -32,6 +32,19 @@ public class Trainer extends Person{
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+
+    Trainer other = (Trainer) obj;
+    return trainerId == other.trainerId;
+}
+
+    @Override
+    public int hashCode() {
+    return Integer.hashCode(trainerId);
+}
 
     public int getTrainerId() {
         return trainerId;

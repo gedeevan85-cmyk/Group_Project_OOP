@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.AuthController;
 import javax.swing.JOptionPane;
 /**
@@ -20,6 +20,7 @@ public class ForgetPasswordForm extends javax.swing.JFrame {
      */
     public ForgetPasswordForm() {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         authController = new AuthController();
 
         defaultEchoChar = jPasswordFieldConfirmPassword.getEchoChar();

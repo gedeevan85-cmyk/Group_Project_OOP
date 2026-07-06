@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import javax.swing.JFrame;
 import controller.AuthController;
 import model.Admin;
 import javax.swing.JOptionPane;
@@ -21,6 +21,7 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         authController = new AuthController();
 
         defaultEchoChar = jPasswordFieldPassword.getEchoChar();
