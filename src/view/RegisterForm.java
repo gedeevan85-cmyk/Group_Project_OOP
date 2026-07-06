@@ -4,9 +4,9 @@
  */
 package view;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import controller.AuthController;
 import model.Admin;
-import javax.swing.JOptionPane;
 /**
  *
  * @author user

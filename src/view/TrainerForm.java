@@ -4,10 +4,10 @@
  */
 package view;
 import javax.swing.JFrame;
-import controller.TrainerController;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import controller.TrainerController;
 import model.Trainer;
 /**
  *

@@ -4,12 +4,12 @@
  */
 package view;
 import javax.swing.JFrame;
-import controller.FitnessClassController;
-import controller.TrainerController;
-import java.sql.Time;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Time;
+import java.util.List;
+import controller.FitnessClassController;
+import controller.TrainerController;
 import model.FitnessClass;
 import model.Trainer;
 /**

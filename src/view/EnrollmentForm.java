@@ -4,28 +4,24 @@
  */
 package view;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
+import java.sql.Date;
 import controller.EnrollmentController;
 import controller.MemberController;
 import controller.FitnessClassController;
-
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.Period;
-
-import java.util.List;
-
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-
 import model.Enrollment;
 import model.Member;
 import model.FitnessClass;
-
 import model.workoutprogram.BulkingProgram;
 import model.workoutprogram.CuttingProgram;
 import model.workoutprogram.WeightLossProgram;
 import model.workoutprogram.MuscleGainProgram;
 import model.workoutprogram.WorkoutProgram;
+
 /**
  *
  * @author user

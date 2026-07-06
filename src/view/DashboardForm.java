@@ -3,12 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
+import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 import controller.MemberController;
 import controller.TrainerController;
 import controller.FitnessClassController;
 import controller.EnrollmentController;
-import javax.swing.JOptionPane;
-import javax.swing.JFrame;
+
 
 /**
  *

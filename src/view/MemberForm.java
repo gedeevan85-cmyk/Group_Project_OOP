@@ -4,13 +4,15 @@
  */
 package view;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
 import controller.MemberController;
 import controller.MembershipPackageController;
 import model.Member;
 import model.MembershipPackage;
-import java.util.List;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author user
