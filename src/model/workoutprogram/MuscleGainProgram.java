@@ -15,12 +15,4 @@ public class MuscleGainProgram extends WorkoutProgram {
         super("Muscle Gain");
     }
 
-    @Override
-    public double calculateDailyCalories(Member member) {
-
-        double weight = member.getWeight();
-
-        return weight * 36 + 250;
-
-    }
 }

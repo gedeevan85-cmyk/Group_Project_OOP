@@ -14,12 +14,4 @@ public class BulkingProgram extends WorkoutProgram{
         super("Bulking");
     }
 
-    @Override
-    public double calculateDailyCalories(Member member) {
-
-        double weight = member.getWeight();
-
-        return weight * 35 + 300;
-
-    }
 }

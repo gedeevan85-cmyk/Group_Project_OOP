@@ -400,16 +400,13 @@ public class EnrollmentForm extends javax.swing.JFrame {
 
         }
 
-        double bmr =
-            enrollmentController.calculateBMR(member);
+        double bmr = enrollmentController.calculateBMR(member);
         
-        double calories =
-            enrollmentController.calculateTargetCalories(
+        double calories = enrollmentController.calculateTargetCalories(
                     bmr,
                     workoutProgram);
 
-        jLabelCalorieTarget.setText(
-                String.format("%.2f kcal", calories));
+        jLabelCalorieTarget.setText(String.format("%.2f kcal", calories));
 
     }
     

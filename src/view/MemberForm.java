@@ -24,7 +24,7 @@ public class MemberForm extends javax.swing.JFrame {
     private List<Member> memberList;
     private Member selectedMember;
     private int currentPage = 1;
-    private final int dataPerPage = 2;
+    private final int dataPerPage = 5;
     private int totalPage;
 
     /**
@@ -426,7 +426,7 @@ public class MemberForm extends javax.swing.JFrame {
         jButtonSearch.addActionListener(this::jButtonSearchActionPerformed);
 
         jButtonPrevv.setBackground(new java.awt.Color(255, 0, 0));
-        jButtonPrevv.setText("<<Prevv");
+        jButtonPrevv.setText("<<Prev");
         jButtonPrevv.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jButtonPrevv.addActionListener(this::jButtonPrevvActionPerformed);
 

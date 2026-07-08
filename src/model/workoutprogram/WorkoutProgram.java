@@ -24,8 +24,6 @@ public abstract class WorkoutProgram {
         this.programName = programName;
     }
 
-    public abstract double calculateDailyCalories(Member member);
-
     @Override
     public String toString() {
         return programName;
